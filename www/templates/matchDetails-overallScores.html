@@ -1,0 +1,33 @@
+<div class="span8 text-center team red">
+	<div class="alert alert-error" id="redScoreBoard"">
+		<h3>
+			<div><%= match.redWorld.name %></div>
+			<div class="mono">
+				<span class="score"><%= _.numberFormat(matchDetails.score.red) %></span>
+				+<span class="income"></span>
+			</div>
+		</h3>
+	</div>
+</div>
+<div class="span8 text-center">
+	<div class="alert alert-info" id="blueScoreBoard">
+		<h3>
+			<div><%= match.blueWorld.name %></div>
+			<div class="mono">
+				<span class="score"><%= _.numberFormat(matchDetails.score.blue) %></span>
+				+<span class="income"></span>
+			</div>
+		</h3>
+	</div>
+</div>
+<div class="span8 text-center team green">
+	<div class="alert alert-success" id="greenScoreBoard">
+		<h3>
+			<div><%= match.greenWorld.name %></div>
+			<div class="mono">
+				<span class="score"><%= _.numberFormat(matchDetails.score.green) %></span>
+				+<span class="income"></span>
+			</div>
+		</h3>
+	</div>
+</div>

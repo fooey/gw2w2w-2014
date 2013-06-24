@@ -1,0 +1,254 @@
+body{
+	font-family: menomonia;
+	font-size: 16px;
+	margin-bottom: 80px;
+}
+
+.container,
+.navbar-static-top .container{
+	width: 980px;
+}
+
+
+.strong{font-weight: bold;}
+.text-center{text-align: center !important}
+.text-left{text-align: left !important}
+.text-right{text-align: right !important}
+.small {font-size: 85%; line-height: 140%;}
+.capitalize {text-transform: capitalize;}
+
+.block-center{display: block; margin-left: auto; margin-right: auto;}
+.block-left{display: block; margin-left: 0; margin-right: auto;}
+.block-right{display: block; margin-left: auto; margin-right: 0;}
+.nowrap{display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+.num,
+.mono{
+	font-family: Monaco, Menlo, Consolas, "Courier New", monospace
+}
+
+.well{
+	padding: 0;
+}
+
+
+.navbar .brand{
+	padding: 0 20px 0 0;
+	margin: 0;
+}
+
+
+
+.team.red{color: #900 !important}
+.team.blue{color: #009 !important}
+.team.green{color: #060 !important}
+
+#indicator{
+	font-size: 28px;
+	line-height: 40px;
+	margin: 0;
+	padding: 0 8px 0 0;
+}
+.navbar{
+	font-size: 14px;
+}
+
+
+#worldLists ul{
+	padding: 8px 20px;
+}
+#worldLists ul.active{
+	background-color: #f9f9f9;
+	border: 1px solid #eee;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+#matchLists li{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#matchLists a{
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float: left;
+	width: 33%;
+}
+
+
+
+#scoreOverall h3{
+	font-size: 15pt;
+	line-height: 16pt;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+#maps li{
+	padding: 0 8px;
+}
+#maps h4{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0 8px;
+}
+#maps .scores{
+	font-size: 9pt;
+}
+
+#maps .scoreBoard span{
+	display: block;
+	float: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	
+}
+#maps .scoreBoard .worldName{
+	width: 67%;
+}
+#maps .scoreBoard .income{
+	font-size: 8pt;
+	width: 10%;
+	text-align: right;
+}
+#maps .scoreBoard .score{
+	font-size: 8pt;
+	width: 23%;
+	text-align: right;
+}
+
+
+li.objective{
+	line-height: 32px;
+	height: 32px;
+	font-size: 10pt;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+}
+li.objective .recapTimer{
+	position: absolute;
+	display: inline-block;
+	top: 10px;
+	left: 8px;
+	color: #000;
+
+	font-size: 10px;
+	background-color: #ffc;
+	height: 12px;
+	width: 26px;
+	line-height: 12px;
+	text-align: center;
+	
+	position: absolute;
+	z-index: 99;
+}
+
+#logTabs li{
+}
+#logTabs a{
+	cursor: pointer;
+	font-size: 9pt;
+	padding: 2px 8px; 
+	margin: 0;
+}
+
+#log{
+	height: 213px;
+	margin-bottom: 8px;
+	overflow-y: auto;
+}
+.log{
+	margin: 0;
+	padding: 0;
+	font-size: 9pt;
+}
+
+.log li,
+.log .timeStamp,
+.log .mapName,
+.log .objName,
+.log .objectiveEvent{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.log .timeStamp,
+.log .mapName,
+.log .objName,
+.log .objectiveEvent{
+	display: inline-block;
+	float: left;
+	border-top: #ccc;
+}
+.log li.header{
+	font-weight: bold;
+}
+.log li.alt{
+	background-color: #f9f9f9;
+}
+
+.log .timeStamp		{width: 7%;}
+.log .mapName		{width: 18%;}
+.log .objName		{width: 25%;}
+.log .objectiveEvent{width: 50%;}
+
+
+
+
+.sprite {
+    background-image: url(/assets/img/icons/sprite.png);
+    background-repeat: no-repeat;
+	background-size: 120px 120px;
+    display: inline-block;
+	vertical-align: middle;
+    width: 26px;
+    height: 26px;
+}
+.sprite-base-camp 		{ background-position: -2px -2px; }
+.sprite-base-castle		{ background-position: -32px -2px; }
+.sprite-base-keep		{ background-position: -62px -2px; }
+.sprite-base-tower		{ background-position: -92px -2px; }
+.sprite-blue-camp		{ background-position: -2px -32px; }
+.sprite-blue-castle		{ background-position: -32px -32px; }
+.sprite-blue-keep		{ background-position: -62px -32px; }
+.sprite-blue-tower		{ background-position: -92px -32px; }
+.sprite-green-camp		{ background-position: -2px -62px; }
+.sprite-green-castle	{ background-position: -32px -62px; }
+.sprite-green-keep		{ background-position: -62px -62px; }
+.sprite-green-tower		{ background-position: -92px -62px; }
+.sprite-red-camp		{ background-position: -2px -92px; }
+.sprite-red-castle		{ background-position: -32px -92px; }
+.sprite-red-keep		{ background-position: -62px -92px; }
+.sprite-red-tower		{ background-position: -92px -92px; }
+
+
+.log .sprite {
+	background-size: 60px 60px;
+    width: 13px;
+    height: 13px;
+}
+.log .sprite-base-camp		{ background-position: -1px -1px; }
+.log .sprite-base-castle	{ background-position: -16px -1px; }
+.log .sprite-base-keep		{ background-position: -31px -1px; }
+.log .sprite-base-tower		{ background-position: -46px -1px; }
+.log .sprite-blue-camp		{ background-position: -1px -16px; }
+.log .sprite-blue-castle	{ background-position: -16px -16px; }
+.log .sprite-blue-keep		{ background-position: -31px -16px; }
+.log .sprite-blue-tower		{ background-position: -46px -16px; }
+.log .sprite-green-camp		{ background-position: -1px -31px; }
+.log .sprite-green-castle	{ background-position: -16px -31px; }
+.log .sprite-green-keep		{ background-position: -31px -31px; }
+.log .sprite-green-tower	{ background-position: -46px -46px; }
+.log .sprite-red-camp		{ background-position: -1px -46px; }
+.log .sprite-red-castle		{ background-position: -16px -46px; }
+.log .sprite-red-keep		{ background-position: -31px -46px; }
+.log .sprite-red-tower		{ background-position: -46px -46px; }
