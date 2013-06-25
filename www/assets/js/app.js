@@ -172,10 +172,27 @@ var prevMatchDetails, prevIncomes;
 			writeInitialDetails(matchDetails);
 			cacheScoreBoards(matchDetails);
 			updateMatchIncomes(matchDetails);
+			
+			var gaData = {
+			  'hitType': 'appState',			// Required.
+			  'eventCategory': 'onMatchData',	// Required.
+			  'eventAction': 'Initial Setup',	// Required.
+			  'eventLabel': urlWorldSlug
+			}
 		}
 		else{
 			updateMatchDetails(matchDetails);
+			
+			var gaData = {
+			  'hitType': 'appState',			// Required.
+			  'eventCategory': 'onMatchData',	// Required.
+			  'eventAction': 'New Data',		// Required.
+			  'eventLabel': urlWorldSlug
+			}
 		}
+		
+		ga('send', gaData);
+		//console.log('Post To GA:', gaData);
 		
 		prevMatchDetails = JSON.parse(JSON.stringify(matchDetails)); // deep copy to break copy by reference
 		
@@ -379,7 +396,19 @@ var prevMatchDetails, prevIncomes;
 		}
 		
 		
+		var gaData = {
+		  'hitType': 'event',					// Required.
+		  'eventCategory': 'ObjectiveUpdated',	// Required.
+		  'eventAction': 'New Owner',			// Required.
+		  'eventLabel': curObj.name,
+		  'eventValue': curObj.owner.name
+		};
+		
 		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
+		//console.log('Post To GA:', gaData);
+		
+		
+		ga('send', gaData);
 		
 		startReCapTimer(curObj);
 			
@@ -391,7 +420,21 @@ var prevMatchDetails, prevIncomes;
 			writeToLog(logHtml);
 			appendGuildToObjective(curObj);
 			
+			var guild = Anet.getGuild(curObj.guildId);
+			var guildName = (guild) ? guild.name : curObj.guildId;
+			
+			var gaData = {
+			  'hitType': 'event',					// Required.
+			  'eventCategory': 'ObjectiveUpdated',	// Required.
+			  'eventAction': 'New Claimer',			// Required.
+			  'eventLabel': curObj.name,
+			  'eventValue': curObj.guildId
+			}
+			ga('send', gaData);
+			
+			
 			console.log('New Claimer: ', mapName, curObj.name);
+			//console.log('Post To GA:', gaData);
 		}
 			
 	};
