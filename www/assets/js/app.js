@@ -179,19 +179,20 @@ var prevMatchDetails, prevIncomes;
 			  'eventAction': 'Initial Setup',	// Required.
 			  'eventLabel': urlWorldSlug
 			}
+			ga('send', gaData);
 		}
 		else{
 			updateMatchDetails(matchDetails);
-			
+			/*
 			var gaData = {
 			  'hitType': 'appState',			// Required.
 			  'eventCategory': 'onMatchData',	// Required.
 			  'eventAction': 'New Data',		// Required.
 			  'eventLabel': urlWorldSlug
 			}
+			*/
 		}
 		
-		ga('send', gaData);
 		//console.log('Post To GA:', gaData);
 		
 		prevMatchDetails = JSON.parse(JSON.stringify(matchDetails)); // deep copy to break copy by reference
