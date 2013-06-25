@@ -201,6 +201,10 @@ li.objective .recapTimer{
 .log .objName		{width: 25%;}
 .log .objectiveEvent{width: 50%;}
 
+#audioToggle label{
+	display: inline-block;
+}
+
 
 
 
