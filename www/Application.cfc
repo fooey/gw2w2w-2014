@@ -55,11 +55,7 @@
 		
 		public void function onRequestStart(required string thePage){
 			param name="url.lang" default="";  
-			param name="url.world" default="";  
-			
-			if(NOT len(url.lang)){
-				location(url="/en", addToken=false, statusCode = 301);
-			}
+			param name="url.world" default=""; 
 		}
 
 

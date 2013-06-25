@@ -8,7 +8,7 @@ if(window.location.pathname !== window.location.pathname.toLowerCase()){
 
 
 var urlPath = window.location.pathname.toLowerCase().split('/')
-	, urlLangSlug = urlPath[1]
+	, urlLangSlug = urlPath[1] || 'en'
 	, urlWorldSlug = urlPath[2];
 
 
