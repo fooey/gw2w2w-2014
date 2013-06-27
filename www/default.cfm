@@ -3,15 +3,15 @@
 	
 	
 	local.cssPaths = [
-		'/assets/css/bootstrap.css'
-		,'/assets/css/font-awesome.css'
-		,'/assets/css/custom.css'
+		expandPath('/siteroot/assets/css/bootstrap.min.css')
+		, expandPath('/siteroot/assets/css/font-awesome.min.css')
+		, expandPath('/siteroot/assets/css/custom.css')
 	];
 	local.cssPaths.addAll(request.cssAppend);
 	
 	local.cssLink = application.cfc.static.getMergedLink(
 		resourceType = "css",
-		relPaths = local.cssPaths
+		absPaths = local.cssPaths
 	);
 	application.util.cfscript.content(reset=true, type="text/html; charset=utf-8");
 </cfscript><!DOCTYPE html>
@@ -44,8 +44,10 @@
 		<a class="brand" href="/"><img src="/assets/img/logo-96x36.png" width="96" height="36"/></a>
 		<ul class="nav" id="worldTitle"></ul>
 		<ul class="nav pull-right" id="quickNav">
-			<li id="indicator"><i class="icon-spinner icon-spin muted hide"></i></li>
-			<li class="divider-vertical hide"></li>
+			<li id="indicator" class="navbarIcon muted"><i class="icon-spinner icon-spin hide"></i></li>
+			<li class="divider-vertical"></li>
+			<li id="audioToggle" class="navbarIcon muted" data-enabled="true"><i class="icon-volume-up"></i></li>
+			<li class="divider-vertical"></li>
 			<li class="hide"><a href="<cfoutput>/#url.lang#</cfoutput>"><i class="icon-globe"></i> Select World</a></li>
 			<li class="divider-vertical hide"></li>
 		</ul>
@@ -67,9 +69,9 @@
 	
 	
 	local.jsPaths = [
-		'/assets/js/app.js'
-		, '/assets/js/lib.js'
-		, '/assets/js/anet.js'
+		expandPath('/siteroot/assets/js/app.js')
+		, expandPath('/siteroot/assets/js/lib.js')
+		, expandPath('/siteroot/assets/js/anet.js')
 		//, '/assets/js/bootstrap.min.js'
 		//, '/assets/js/store+json2.min.js'
 	];
@@ -77,7 +79,7 @@
 	
 	local.jsLink = application.cfc.static.getMergedLink(
 		resourceType = "js",
-		relPaths = local.jsPaths
+		absPaths = local.jsPaths
 	);
 </cfscript>
 	

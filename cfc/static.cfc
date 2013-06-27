@@ -2,16 +2,16 @@
 output="false"
 {
 	
-	public function init(){
-		variables.cssMergedFolder = expandPath('/siteRoot/assets/merged/');
-		if(NOT directoryExists(variables.cssMergedFolder)){
-			directoryCreate(variables.cssMergedFolder);
+	public function init(
+		required localPath
+		, required publicPath
+	){
+		variables.localPath = arguments.localPath;
+		variables.publicPath = arguments.publicPath;
+		
+		if(NOT directoryExists(variables.localPath)){
+			directoryCreate(variables.localPath);
 		}
-		
-		
-		variables.yuiCompressorCSS = createObject('java', 'com.yahoo.platform.yui.compressor.CssCompressor');
-		//variables.yuiCompressorJS = createObject('java', 'com.yahoo.platform.yui.compressor.JavaScriptCompressor');
-		//variables.ErrorReporter = createObject('java', 'org.mozilla.javascript.ErrorReporter');
 	}
 	
 
@@ -42,12 +42,12 @@ output="false"
 	
 	
 	
-	public function getMergedLink(required resourceType, required array relPaths) output=true {
+	public function getMergedLink(required resourceType, required array absPaths) output=true {
 		local.lastMod = getFileInfo(getCurrentTemplatePath()).Lastmodified;
 		
 		local.paths = [];
-		for(local.relPath in arguments.relPaths){
-			arrayAppend(local.paths,  expandPath('/siteRoot/#local.relPath#'));
+		for(local.path in arguments.absPaths){
+			arrayAppend(local.paths,  local.path);
 		}
 			
 		for(local.path in local.paths){
@@ -58,10 +58,7 @@ output="false"
 		local.modHash = lcase(hash(local.lastMod));
 		
 		local.fileName = "#local.modHash#.#arguments.resourceType#";
-		local.filePath = variables.cssMergedFolder & "\#local.fileName#";
-		
-		local.fileNameMin = "#local.modHash#.min.#arguments.resourceType#";
-		local.filePathMin = variables.cssMergedFolder & "\#local.fileNameMin#";
+		local.filePath = variables.localPath & "\#local.fileName#";
 		
 		
 		if(NOT fileExists(local.filePath) OR structKeyExists(url, "recompileCss")){
@@ -77,81 +74,11 @@ output="false"
 			}
 			
 			fileWrite(local.filePath, arrayTolist(local.cssMerged, local.crlf));
-			
-			if(arguments.resourceType EQ "CSS"){
-				compressResource(
-					input = local.filePath
-					, resourceType = arguments.resourceType
-					, toPath = local.filePathMin
-				);
-			}
 		}
 		
-		if(arguments.resourceType EQ "CSS"){
-			local.urlPath = "/assets/merged/#local.fileNameMin#";
-		}
-		else{
-			local.urlPath = "/assets/merged/#local.fileName#";
-		}
+		local.urlPath = variables.publicPath & "/#local.fileName#";
 		
 		return local.urlPath;
-	}
-	
-	
-	
-	public string function compressResource(input, resourceType, toPath){
-		if(fileExists(arguments.input)){
-			arguments.input = fileRead(arguments.input);
-		}
-		
-		local.inputString = createObject('java','java.io.StringReader').init(arguments.input);
-		local.outputString = createObject('java','java.io.StringWriter').init();
-		
-			if(arguments.resourceType EQ "css"){
-				variables.yuiCompressorCSS
-					.init(local.inputString)
-					.compress(local.outputString, javaCast('int', -1));
-			}
-			/*else if(arguments.resourceType EQ "js"){
-				
-				arguments.linebreak = -1;
-				arguments.munge = false;
-				arguments.verbose = false;
-				arguments.preserveAllSemiColons = false;
-				arguments.disableOptimizations = false;
-				arguments.disableOptimizations = false;
-				arguments.charset = 'UTF-8';
-				
-				variables.yuiCompressorJS
-						.init(
-							local.inputString
-							, createObject('java', 'org.mozilla.javascript.ErrorReporter')
-						)
-						.compress(
-							local.outputString
-							,javaCast('int',arguments.linebreak)
-							,javaCast('boolean',arguments.munge)
-							,javaCast('boolean',arguments.verbose)
-							,javaCast('boolean',arguments.preserveAllSemiColons)
-							,javaCast('boolean',arguments.disableOptimizations)
-						);
-			}*/
-			else{
-				throw("Not supported");
-			}
-			
-			local.compressed = local.outputString.toString();
-			
-		local.outputString.close();
-		local.inputString.close();
-		
-		if(structKeyExists(arguments, "toPath")){
-			fileWrite(arguments.toPath, local.compressed);
-			return true;
-		}
-		else{
-			return local.compressed;
-		}
 	}
 
 }

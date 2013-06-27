@@ -1,30 +1,5 @@
-<h4><%= mapType.label %></h4>
-<ul class="unstyled scores">
-	<li class="team red scoreBoard clearfix" id="mapScoreBoard-red-<%= mapType.key %>">
-		<span class="worldName"><%= match.redWorld.name %></span>
-		<span class="income mono"></span>
-		<span class="score mono"><%= _.numberFormat(map.score.red) %></span>
-	</li>
-	<li class="team blue scoreBoard clearfix" id="mapScoreBoard-blue-<%= mapType.key %>">
-		<span class="worldName"><%= match.blueWorld.name %></span>
-		<span class="income mono"></span>
-		<span class="score mono"><%= _.numberFormat(map.score.blue) %></span>
-	</li>
-	<li class="team green scoreBoard clearfix" id="mapScoreBoard-green-<%= mapType.key %>">
-		<span class="worldName"><%= match.greenWorld.name %></span>
-		<span class="income mono"></span>
-		<span class="score mono"><%= _.numberFormat(map.score.green) %></span>
-	</li>
-</ul>
-<ul class="unstyled objectives">
-<% _.each(map.objectives, function(objective) { %>
-	<li class="clearfix objective team <%= objective.owner.color||'base' %>" id="obj-<%= objective.id %>">
-		<span class="sprite sprite-<%= objective.owner.color||'base' %>-<%= objective.type %>" title="<%= objective.id + ' ' + objective.generic %>"></span>
-		<%= objective.name %>
-		<% if(objective.guildId) { %>
-			<sup class="guild" data-guildid="<%= objective.guildId %>"><i class="icon-spinner icon-spin"></i></sup>
-		<% }; %>
-		<span class="recapTimer mono hide"></span>
-	</li>
-<% }); %>
-</dl>
+<div class="well">
+	<h4><%= mapType.label %></h4>
+	<ul class="unstyled scores"></ul>
+</div>
+<div class="objectives"></div>

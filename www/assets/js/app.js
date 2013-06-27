@@ -154,51 +154,39 @@ var prevMatchDetails, prevIncomes;
 	
 	
 	function onInit(){
-		console.log('** onInit()')
-		
-		var html = renderExternal('matchDetails');
-		$content.html(html);
-		
-		$maps = $('#maps');
+		console.log('** onInit()');
 	}
 	
 	function onMatchData(){
 		//console.log('** onMatchData()');
-		var matchDetails = Anet.getMatchDetails();
+		
+		var matchDetails = Anet.getMatchDetails()
+			, match = Anet.getMatch();
+		
 		$indicator.stop().fadeOut();
 		
-		if($('#scoreOverall .icon-spinner').length){
-			writeTitle(matchDetails);
+		//console.log(matchDetails);
+		
+		if(!$maps){
 			writeInitialDetails(matchDetails);
+			$maps = $('#maps');
+			
+			writeTitle(matchDetails);
 			cacheScoreBoards(matchDetails);
 			updateMatchIncomes(matchDetails);
 			
-			var gaData = {
-			  'hitType': 'appState',			// Required.
-			  'eventCategory': 'onMatchData',	// Required.
-			  'eventAction': 'Initial Setup',	// Required.
-			  'eventLabel': urlWorldSlug
-			}
-			ga('send', gaData);
 		}
 		else{
 			updateMatchDetails(matchDetails);
-			/*
-			var gaData = {
-			  'hitType': 'appState',			// Required.
-			  'eventCategory': 'onMatchData',	// Required.
-			  'eventAction': 'New Data',		// Required.
-			  'eventLabel': urlWorldSlug
-			}
-			*/
-		}
-		
-		//console.log('Post To GA:', gaData);
-		
-		prevMatchDetails = JSON.parse(JSON.stringify(matchDetails)); // deep copy to break copy by reference
+		}		
 		
 		
-		var randomRefresh = Math.floor((Math.random() * 2 + 1) * 1000); // between 1 and 3 seconds
+		// deep copy to break copy by reference
+		prevMatchDetails = JSON.parse(JSON.stringify(matchDetails)); 
+		
+		
+		// refresh the data in 1-3 seconds
+		var randomRefresh = Math.floor((Math.random() * 2 + 1) * 1000); 
 		
 		setTimeout(function(){
 			$indicator
@@ -376,18 +364,19 @@ var prevMatchDetails, prevIncomes;
 		var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
 		var curSprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
 		
+		/*
 		var cssFrom =  	{backgroundColor: '#ffffcc'};
-		var cssTo = 	{backgroundColor: '#f5f5f5'};
+		var cssTo = 	{backgroundColor: 'inherit'};
+			.animate(cssTo, 2*60*1000)
+		*/
 		
 		$li
 			.removeClass(oldObj.owner.color)
 			.addClass(curObj.owner.color)
-			.css(cssFrom)
-			.animate(cssTo, 2*60*1000)
 			.find('.guild')
 				.remove()
 			.end()
-			.find('.sprite')
+			.find('.spriteSmall')
 				.removeClass(oldSprite)
 				.addClass(curSprite)
 			.end();
@@ -396,22 +385,22 @@ var prevMatchDetails, prevIncomes;
 			appendGuildToObjective(curObj);
 		}
 		
+		startReCapTimer(curObj);
+		
+		
 		
 		var gaData = {
-		  'hitType': 'event',					// Required.
-		  'eventCategory': 'ObjectiveUpdated',	// Required.
-		  'eventAction': 'New Owner',			// Required.
-		  'eventLabel': curObj.name,
-		  'eventValue': curObj.owner.name
+		  'hitType': 'event',			// Required.
+		  'eventCategory': curObj.name,	// Required.
+		  'eventAction': 'New Owner',	// Required.
+		  'eventLabel': curObj.owner.name,
+		  'nonInteraction': 1
 		};
-		
-		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
 		//console.log('Post To GA:', gaData);
-		
-		
 		ga('send', gaData);
 		
-		startReCapTimer(curObj);
+		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
+		
 			
 	};
 	
@@ -425,16 +414,17 @@ var prevMatchDetails, prevIncomes;
 			var guildName = (guild) ? guild.name : curObj.guildId;
 			
 			var gaData = {
-			  'hitType': 'event',					// Required.
-			  'eventCategory': 'ObjectiveUpdated',	// Required.
-			  'eventAction': 'New Claimer',			// Required.
-			  'eventLabel': curObj.name,
-			  'eventValue': curObj.guildId
-			}
+			  'hitType': 'event',			// Required.
+			  'eventCategory': curObj.name,	// Required.
+			  'eventAction': 'New Claimer',	// Required.
+			  'nonInteraction': 1
+			};
 			ga('send', gaData);
 			
 			
 			console.log('New Claimer: ', mapName, curObj.name);
+			
+			onGuildData();
 			//console.log('Post To GA:', gaData);
 		}
 			
@@ -483,25 +473,88 @@ var prevMatchDetails, prevIncomes;
 	}
 	
 	
-	function writeInitialDetails(matchDetails){
-		var match = Anet.getMatch();
+	function writeInitialDetails(matchDetails){	
+		console.log('writeInitialDetails()', matchDetails);
 		
+		var match = Anet.getMatch();
+			
+		var $matchDetails = $(renderExternal('matchDetails'));
+		var overallScores = renderExternal('matchDetails-overallScores', {matchDetails: matchDetails, match: match});
 		var logHtml = renderExternal('log', {mapTypes: matchDetails.mapTypes});
-		$('#logContainer').html(logHtml);
-		$log = $('#log');
-			
-		var scoresHtml = renderExternal('matchDetails-overallScores', {matchDetails: matchDetails, match: match});
-		$content.find('#scoreOverall').html(scoresHtml);
-	
-		_.each(matchDetails.mapTypes, function(mapType) {
+		
+		_.each(matchDetails.mapTypes, function(mapType, i){
+			var $map = $matchDetails.find('#breakdown-' + mapType.key);
 			var map = matchDetails.maps[mapType.key];
-			var mapHtml = $(renderExternal('matchDetails-map', {mapType: mapType, match: match, map: map}));
-			mapHtml.find('.hide').hide();
 			
-			$content
-				.find('#breakdown-' + map.scoreType)
-				.html(mapHtml);
+			var mapHtml = renderExternal('matchDetails-map', {
+				mapType: mapType
+				, map: map
+			});
+			
+			var mapScoreHtml = renderExternal('matchDetails-MapScore', {
+				mapType: mapType
+				, map: map
+				, match: match
+			});
+			
+			var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {
+				mapType: mapType
+				, map: map
+				, objectivesMap: objGroups[mapType.key]
+			}));
+			
+			
+			$map
+				.append(mapHtml)
+				.find('.scores')
+					.append(mapScoreHtml)
+				.end()
+				.find('.objectives')
+					.append($mapObjectivesHtml)
+				.end();
+				
+			
+			$map.find('.objective')
+				.each(function(i){
+					var $that = $(this);
+					var id = $that.data('id');
+					var obj = Anet.getObjectiveBy('id', id);
+					
+					var spriteClass = 'sprite-' + obj.owner.color + '-' + obj.type;
+					
+					$that
+						.addClass(obj.owner.color)
+						.find('.objName')
+							.attr('title', obj.name)
+							.html(obj.name)
+						.end()
+						.find('.spriteSmall')
+							.attr('title', obj.name)
+							.addClass(spriteClass);
+							
+					if(obj.guildId){
+						$that.find('.guild')
+							.replaceWith('<sup class="guild" data-guildid="' + obj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>')
+					}
+					else{
+						$that.find('.guild').remove();
+					}
+				})
+			.end()
 		});
+		
+		//console.log(overallScores)
+		
+		$matchDetails
+			.find('.hide')
+				.hide()
+			.end()
+			.appendTo($content);
+			
+		$('#logContainer').append(logHtml);
+		$('#scoreOverall').append(overallScores);
+			
+		$log = $('#log');
 	}
 	
 	
@@ -601,20 +654,158 @@ var prevMatchDetails, prevIncomes;
 	}
 	
 	function playNotification(){
-		if($('#enableAudio:checked').length){
+		if($('#audioToggle').data('enabled')){
 			$('#audioNotification').get(0).play();
 		}
 	}
 	
-	
-	$('body').on('click', '#enableAudio', function(){
+	$('#audioToggle').on('click', function(e){
+		e.preventDefault();
+		var $that = $(this);
+		
+		$that.data('enabled', !$that.data('enabled'));
+		
 		playNotification();
-	});
+		
+		if($that.data('enabled')){
+			$that.hide().html('<i class="icon-volume-up"></i>').fadeIn();
+		}
+		else{
+			$that.hide().html('<span class="icon-stack"><i class="icon-ban-circle icon-stack-base text-error"></i><i class="icon-volume-up"></i></span>').fadeIn();
+		}
+	})
 	
 	
 	
 	
 });
+
+
+
+var objGroups = {
+	'Center': {
+		'Castle':{
+			alert: 'well'
+			, objectives: [
+				9			//sm
+			]
+		}
+		, 'Red Corner':{
+			alert: 'error'
+			, objectives: [
+				1			//overlook
+				, 18		//anz
+				, 19		//ogre
+				, 17		//mendons
+				, 20		//veloka
+				, 5			//pang
+				, 6			//speldan
+			]
+		}
+		, 'Blue Corner':{
+			alert: 'info'
+			, objectives: [
+				2			//valley
+				, 16		//quentin
+				, 21		//durios
+				, 22		//bravost
+				, 15		//langor
+				, 8 		//umber
+				, 7			//dane
+			]
+		}
+		, 'Green Corner':{
+			alert: 'success'
+			, objectives: [
+				3			//lowlands
+				, 12		//wildcreek
+				, 14		//klovan
+				, 13		//jerrifer
+				, 11		//aldons
+				, 4 		//golanta
+				, 10		//rogues
+			]
+		}
+	}
+	
+	, 'RedHome': {
+		'North':{
+			alert: 'error'
+			, objectives: [
+				37			//keep
+				, 33		//bay
+				, 32		//hills
+				, 38		//longview
+				, 40		//cliffside
+				, 39 		//godsword
+				, 52		//hopes
+				, 51		//astral
+			]
+		}
+		,'South':{
+			alert: 'well'
+			, objectives: [
+				35			//briar
+				, 36		//lake
+				, 34		//lodge
+				, 53		//vale
+				, 50 		//water
+			]
+		}
+	}
+	
+	, 'BlueHome': {
+		'North':{
+			alert: 'info'
+			, objectives: [
+				23			//keep
+				, 27		//bay
+				, 31		//hills
+				, 30		//woodhaven
+				, 28		//dawns
+				, 29 		//spirit
+				, 58		//gods
+				, 60		//star
+			]
+		}
+		,'South':{
+			alert: 'well'
+			, objectives: [
+				25			//briar
+				, 26		//lake
+				, 24		//champ
+				, 59		//vale
+				, 61 		//water
+			]
+		}
+	}
+	
+	, 'GreenHome': {
+		'North':{
+			alert: 'success'
+			, objectives: [
+				46			//keep
+				, 44		//bay
+				, 41		//hills
+				, 47		//sunny
+				, 57		//crag
+				, 56 		//titan
+				, 48		//faith
+				, 54		//fog
+			]
+		}
+		,'South':{
+			alert: 'well'
+			, objectives: [
+				45			//briar
+				, 42		//lake
+				, 43		//lodge
+				, 49		//vale
+				, 55 		//water
+			]
+		}
+	}
+};
 
 
 

@@ -56,6 +56,11 @@
 		public void function onRequestStart(required string thePage){
 			param name="url.lang" default="";  
 			param name="url.world" default=""; 
+			
+			if(structKeyExists(url, "reset")){
+				applicationStop();
+				location('/');
+			}
 		}
 
 
@@ -110,7 +115,10 @@
 				//application.util.string = new lib.cfc.stringUtils();
 				
 				
-				application.cfc.static = new cfc.static();
+				application.cfc.static = new cfc.static(
+					localPath = expandPath('/siteRoot/assets/merged/')
+					, publicPath = '/assets/merged'
+				);
 				//application.cfc.nav = new cfc.nav();
 				//application.cfc.util = new cfc.util();
 			}

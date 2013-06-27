@@ -1,34 +1,24 @@
 <br>
 
-<div class="row-fluid" id="scoreOverall"><i class="icon-spinner icon-spin"></i></div>
+<div class="row-fluid" id="scoreOverall" class="scoreOverall"></div>
 
 <div class="row-fluid" id="maps">
 	<div class="span6">
-		<div class="well" id="breakdown-Center" class="breakdown Center"><i class="icon-spinner icon-spin"></i></div>
+		<div id="breakdown-Center" class="breakdown Center"></div>
 	</div>
 	<div class="span18">
+		<div class="row-fluid">
+			<div class="span8"><div id="breakdown-RedHome" class="breakdown RedHome"></div></div>
+			<div class="span8"><div id="breakdown-BlueHome" class="breakdown BlueHome"></div></div>
+			<div class="span8"><div id="breakdown-GreenHome" class="breakdown GreenHome"></div></div>
+		</div>
 		<div class="row-fluid"><div class="span24">
 			<div id="logContainer"></div>
 		</div></div>
-		<div class="row-fluid">
-			<div class="span8"><div class="well" id="breakdown-RedHome" class="breakdown RedHome"><i class="icon-spinner icon-spin"></i></div></div>
-			<div class="span8"><div class="well" id="breakdown-BlueHome" class="breakdown BlueHome"><i class="icon-spinner icon-spin"></i></div></div>
-			<div class="span8"><div class="well" id="breakdown-GreenHome" class="breakdown GreenHome"><i class="icon-spinner icon-spin"></i></div></div>
-		</div>
 	</div>
 </div>
 
 
-<div class="row-fluid">
-	<div class="span24 text-right" id="audioToggle">
-		<audio id="audioNotification"><source src="/assets/audio/beep-27.mp3" type="audio/mpeg"></audio>
-		<label><input type="checkbox" id="enableAudio" checked="checked"> Play Sound On Event</label>
-	</div>
-</div>
-
-<div class="row-fluid">
-	<div class="span24 text-center">
-		<br>
-		<a href="/"><img src="/assets/img/logo-512x192.png" class='block-center' width="512" height="192"/></a>
-	</div>
+<div id="audioToggle">
+	<audio id="audioNotification"><source src="/assets/audio/beep-27.mp3" type="audio/mpeg"></audio>
 </div>
