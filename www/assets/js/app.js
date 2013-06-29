@@ -317,8 +317,9 @@ var prevMatchDetails, prevIncomes;
 		});
 		
 		_.each(objectives, function(obj, i){
-			incomes.overall[obj.owner.color] += obj.points;
-			incomes.maps[obj.mapKey][obj.owner.color] += obj.points;
+			var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
+			incomes.overall[objColor] += obj.points;
+			incomes.maps[obj.mapKey][objColor] += obj.points;
 		});
 		
 		
@@ -345,11 +346,13 @@ var prevMatchDetails, prevIncomes;
 				var curObj = matchDetails.maps[mapType.key].objectives[ixObj];
 				var oldObj = obj;				
 				
-				if(oldObj.owner.name !== curObj.owner.name){
-					newObjectiveOwner(mapType.label, curObj, oldObj);
-				}
-				else if(oldObj.guildId !== curObj.guildId && curObj.guildId){
-					newObjectiveClaimer(mapType.label, curObj);
+				if(oldObj.owner){
+					if(oldObj.owner.name !== curObj.owner.name){
+						newObjectiveOwner(mapType.label, curObj, oldObj);
+					}
+					else if(oldObj.guildId !== curObj.guildId && curObj.guildId){
+						newObjectiveClaimer(mapType.label, curObj);
+					}
 				}
 			});
 		});
@@ -520,10 +523,11 @@ var prevMatchDetails, prevIncomes;
 					var id = $that.data('id');
 					var obj = Anet.getObjectiveBy('id', id);
 					
-					var spriteClass = 'sprite-' + obj.owner.color + '-' + obj.type;
-					
+					var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
+					var spriteClass = 'sprite-' + objColor + '-' + obj.type;
+						
 					$that
-						.addClass(obj.owner.color)
+						.addClass(objColor)
 						.find('.objName')
 							.attr('title', obj.name)
 							.html(obj.name)
