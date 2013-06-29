@@ -117,23 +117,38 @@ body{
 	margin: 0;
 	padding: 4px;
 }
-#maps h4{
+
+
+
+.breakdown.active *{
+	border-color: #000;
+}
+.breakdown.active .well{
+	background-color: #ffe;
+}
+.breakdown.active .well h4{
+	font-weight: bold;
+}
+
+.breakdown h4.serverName{
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding: 0 8px;
 	margin: 0;
 	text-align: center;
+	font-weight: normal;
+	cursor: pointer;
+	color: #003;
 }
 
-
-#maps .scores{
+.breakdown .scores{
 	font-size: 9pt;
 	margin: 0;
 	padding: 0 6px;
 }
 
-#maps .scoreBoard span{
+.breakdown .scoreBoard span{
 	display: block;
 	float: left;
 	white-space: nowrap;
@@ -141,15 +156,15 @@ body{
 	text-overflow: ellipsis;
 	
 }
-#maps .scoreBoard .worldName{
+.breakdown .scoreBoard .worldName{
 	width: 67%;
 }
-#maps .scoreBoard .income{
+.breakdown .scoreBoard .income{
 	font-size: 8pt;
 	width: 10%;
 	text-align: right;
 }
-#maps .scoreBoard .score{
+.breakdown .scoreBoard .score{
 	font-size: 8pt;
 	width: 23%;
 	text-align: right;

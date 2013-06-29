@@ -620,7 +620,7 @@ var prevMatchDetails, prevIncomes;
 	}
 	
 	
-	$content.on('click', '#logTabs a', function(){
+	$content.on('click tabClick', '#logTabs a', function(){
 		var $that = $(this);
 		$that
 			.closest('li')
@@ -629,6 +629,23 @@ var prevMatchDetails, prevIncomes;
 					.removeClass('active');
 		
 		toggleTabTo($that.data('target'));
+		highlightMap($that.data('target'));
+	});
+	
+	$content.on('click', '.serverName', function(){
+		var $that = $(this);
+		var target =$that.data('target');
+		
+		$('#logTabs a').each(function(){
+			if($(this).data('target') === target){
+				$(this).trigger('tabClick');
+			}
+		});
+		
+		/*
+		toggleTabTo($that.data('target'));
+		highlightMap($that.data('target'));
+		*/
 	});
 	
 	
@@ -656,6 +673,16 @@ var prevMatchDetails, prevIncomes;
 		
 		zebraStripeVisibleLog();
 	}
+	
+	
+	
+	function highlightMap(mapKey){
+		var $map = $('#breakdown-' + mapKey);
+		$('.breakdown').removeClass('active');
+		$map.addClass('active');
+	}
+	
+	
 	
 	function playNotification(){
 		if($('#audioToggle').data('enabled')){
