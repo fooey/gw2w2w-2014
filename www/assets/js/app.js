@@ -350,6 +350,9 @@ var prevMatchDetails, prevIncomes;
 					if(oldObj.owner.name !== curObj.owner.name){
 						newObjectiveOwner(mapType.label, curObj, oldObj);
 					}
+					else if(oldObj.guildId && !curObj.guildId){
+						removeClaimer(mapType.label, curObj);
+					}
 					else if(oldObj.guildId !== curObj.guildId && curObj.guildId){
 						newObjectiveClaimer(mapType.label, curObj);
 					}
@@ -403,9 +406,18 @@ var prevMatchDetails, prevIncomes;
 		ga('send', gaData);
 		
 		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
-		
-			
 	};
+	
+	
+	function removeClaimer(mapName, curObj){
+		$('#obj-' + curObj.id)
+			.find('.guild')
+				.remove()
+			.end();
+			
+		console.log('Remove Claimer: ', mapName, curObj.name);
+	};
+	
 	
 	function newObjectiveClaimer(mapName, curObj){
 		if(curObj.guildId){
@@ -641,11 +653,6 @@ var prevMatchDetails, prevIncomes;
 				$(this).trigger('tabClick');
 			}
 		});
-		
-		/*
-		toggleTabTo($that.data('target'));
-		highlightMap($that.data('target'));
-		*/
 	});
 	
 	
