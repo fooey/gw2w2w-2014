@@ -35,6 +35,8 @@ var prevMatchDetails, prevIncomes;
  $(function () {
  	"use strict";
 	
+	gaqRankTracker();
+	
 	var $content = $('#content')
 		, $quickNav = $('#quickNav')
 		, $indicator = $('#indicator')
@@ -393,18 +395,6 @@ var prevMatchDetails, prevIncomes;
 		
 		startReCapTimer(curObj);
 		
-		
-		
-		var gaData = {
-		  'hitType': 'event',			// Required.
-		  'eventCategory': curObj.name,	// Required.
-		  'eventAction': 'New Owner',	// Required.
-		  'eventLabel': curObj.owner.name,
-		  'nonInteraction': 1
-		};
-		//console.log('Post To GA:', gaData);
-		ga('send', gaData);
-		
 		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
 	};
 	
@@ -428,19 +418,9 @@ var prevMatchDetails, prevIncomes;
 			var guild = Anet.getGuild(curObj.guildId);
 			var guildName = (guild) ? guild.name : curObj.guildId;
 			
-			var gaData = {
-			  'hitType': 'event',			// Required.
-			  'eventCategory': curObj.name,	// Required.
-			  'eventAction': 'New Claimer',	// Required.
-			  'nonInteraction': 1
-			};
-			ga('send', gaData);
-			
 			
 			console.log('New Claimer: ', mapName, curObj.name);
-			
 			onGuildData();
-			//console.log('Post To GA:', gaData);
 		}
 			
 	};
@@ -642,6 +622,16 @@ var prevMatchDetails, prevIncomes;
 		
 		toggleTabTo($that.data('target'));
 		highlightMap($that.data('target'));
+		
+		var gaData = {
+		  'hitType': 'event',			// Required.
+		  'eventCategory': 'Tabs',		// Required.
+		  'eventAction': 'Changed Tab',	// Required.
+		  'eventLabel': $that.data('target')
+		};
+		//console.log('Post To GA:', gaData);
+		ga('send', gaData);
+		
 	});
 	
 	$content.on('click', '.serverName', function(){
@@ -711,6 +701,17 @@ var prevMatchDetails, prevIncomes;
 		else{
 			$that.hide().html('<span class="icon-stack"><i class="icon-ban-circle icon-stack-base text-error"></i><i class="icon-volume-up"></i></span>').fadeIn();
 		}
+		
+		
+		
+		var gaData = {
+		  'hitType': 'event',				// Required.
+		  'eventCategory': 'Audio',			// Required.
+		  'eventAction': 'Toggle State',	// Required.
+		  'eventLabel': $that.data('enabled')
+		};
+		//console.log('Post To GA:', gaData);
+		ga('send', gaData);
 	})
 	
 	

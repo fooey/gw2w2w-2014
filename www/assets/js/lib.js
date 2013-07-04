@@ -1,5 +1,3 @@
-
-	
 function minuteFormat(ms){
 	var seconds = Math.floor(ms / 1000);
 	var minutes = Math.floor(seconds / 60);
@@ -16,10 +14,6 @@ function minuteFormat(ms){
 	
 	return txt;
 }
-
-
-
-
 
 
 
@@ -49,6 +43,47 @@ function renderExternal(template, templateData) {
 
     return renderExternal.cache[template](templateData);
 }
+
+
+
+
+
+
+function gaqRankTracker() {
+	try {
+		if (document.referrer.match(/google\.com/gi) && document.referrer.match(/cd/gi)) {
+			var myString = document.referrer;
+			var r = myString.match(/cd=(.*?)&/);
+			var rank = parseInt(r[1]);
+			var kw = myString.match(/q=(.*?)&/);
+			var p = document.location.pathname;
+			
+			if (kw[1].length > 0) {
+				var keyWord = decodeURI(kw[1]);
+			}
+			else {
+				var keyWord = "(not provided)";
+			}
+			
+			
+			var gaData = {
+			  'hitType': 'event',			// Required.
+			  'eventCategory': RankTracker,	// Required.
+			  'eventAction': keyWord,		// Required.
+			  'eventLabel': p,
+			  'eventValue': rank,
+			  'nonInteraction': 1
+			};
+			//console.log('Post To GA:', gaData);
+			ga('send', gaData);
+		}
+	}
+	catch(err){}
+}
+
+
+
+
 
 
 
