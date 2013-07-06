@@ -69,6 +69,10 @@ var prevMatchDetails, prevIncomes;
 	
 	Anet = new AnetAPI(urlLangSlug, urlWorldSlug, listeners);
 	
+	$('.container').append(
+		'<div class="row-fluid"><div class="span24 text-right small muted"><hr>Please send comments, bugs, and sweet, sweet donations to fooey.5824<br>Or, /wave at Zyrri [CORE] if you wander by on IoJ</div></div>'
+	);
+	
 	
 	
 	
