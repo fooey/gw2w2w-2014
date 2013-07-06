@@ -70,7 +70,15 @@ var prevMatchDetails, prevIncomes;
 	Anet = new AnetAPI(urlLangSlug, urlWorldSlug, listeners);
 	
 	$('.container').append(
-		'<div class="row-fluid"><div class="span24 text-right small muted"><hr>Please send comments, bugs, and sweet, sweet donations to fooey.5824<br>Or, /wave at Zyrri [CORE] if you wander by on IoJ</div></div>'
+		'<div class="row-fluid">\
+			<div class="span24">\
+				<hr> \
+				<small class="muted attrib">\
+					Please send comments, bugs, and sweet, sweet donations to <a href="https://forum-en.guildwars2.com/members/fooey-5824">fooey.5824</a><br>\
+					Or, /wave at Zyrri [<a href="http://core.gw2gt.com">CORE</a>] if you wander by on <a href="http://dev.gw2w2w.com/en/isle-of-janthir">IoJ</a>\
+				</small>\
+			</div>\
+		</div>'
 	);
 	
 	

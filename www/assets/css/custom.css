@@ -285,6 +285,14 @@ li.objective .recapTimer{
 	display: inline-block;
 }
 
+.attrib{
+	display: block;
+	text-align: right;
+	font-size: 9pt;
+	line-height: 12pt;
+	padding: 0 12px;
+}
+
 
 
 
