@@ -19,7 +19,6 @@ var Anet
 	, world
 	, matches
 	, match
-	, objectives
 	, matchDetails
 	, guilds;
 	
@@ -43,7 +42,8 @@ var prevMatchDetails, prevIncomes;
 	
 	var $log
 		, $maps
-		, $scoreBoards = { overall: {}, maps: {}};
+		, $scoreBoards = { overall: {}, maps: {}}
+		, $objectives = {}
 	
 	
 	
@@ -53,6 +53,8 @@ var prevMatchDetails, prevIncomes;
 			onInit: onInit
 			, onMatchData: onMatchData
 			, onGuildData: onGuildData
+			, onOwnerChange: onOwnerChange
+			, onClaimerChange: onClaimerChange
 		};
 		var $log;
 	}
@@ -171,6 +173,7 @@ var prevMatchDetails, prevIncomes;
 		
 		if(!$maps){
 			writeInitialDetails(matchDetails);
+			updateTimers();
 			$maps = $('#maps');
 			
 			writeTitle(matchDetails);
@@ -179,7 +182,8 @@ var prevMatchDetails, prevIncomes;
 			
 		}
 		else{
-			updateMatchDetails(matchDetails);
+			updateMatchScores(matchDetails);
+			updateMatchIncomes(matchDetails);
 		}		
 		
 		
@@ -218,13 +222,66 @@ var prevMatchDetails, prevIncomes;
 		});
 	}
 	
-	function updateMatchDetails(matchDetails){
-		//console.log('updateMatchDetails: ', prevMatchDetails, matchDetails);
+	
+	
+	function onOwnerChange(mapName, curObj, oldObj){
+		var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
+		writeToLog(logHtml);
 		
-		updateMatchObjectives(matchDetails);
-		updateMatchScores(matchDetails);
-		updateMatchIncomes(matchDetails);
+		var $li = $('#obj-' + curObj.id);
+		var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
+		var curSprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
+		
+		/*
+		var cssFrom =  	{backgroundColor: '#ffffcc'};
+		var cssTo = 	{backgroundColor: 'inherit'};
+			.animate(cssTo, 2*60*1000)
+		*/
+		
+		$li
+			.removeClass(oldObj.owner.color)
+			.addClass(curObj.owner.color)
+			.find('.guild')
+				.remove()
+			.end()
+			.find('.spriteSmall')
+				.removeClass(oldSprite)
+				.addClass(curSprite)
+			.end();
+			
+		if(curObj.guildId){
+			appendGuildToObjective(curObj);
+		}
+		
+		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
 	}
+	
+	
+	
+	function onClaimerChange(mapName, curObj, oldObj){
+		var $li = $('#obj-' + curObj.id);
+		
+		if(curObj.guildId){
+			var logHtml = renderExternal('log-newClaimer', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj});
+			writeToLog(logHtml);
+			appendGuildToObjective(curObj);
+			
+			var guild = Anet.getGuild(curObj.guildId);
+			var guildName = (guild) ? guild.name : curObj.guildId;
+			
+			
+			console.log('New Claimer: ', mapName, curObj.name);
+			onGuildData();
+		}
+		else{
+			$li.find('.guild')
+				.remove()
+			.end();
+			console.log('Remove Claimer: ', mapName, curObj.name);
+		}
+			
+	}
+	
 	
 	
 	function cacheScoreBoards(matchDetails){
@@ -338,92 +395,6 @@ var prevMatchDetails, prevIncomes;
 	}
 	
 	
-	function updateMatchObjectives(matchDetails){
-		
-		// look for changed objective owners and guild claimers
-		_.each(prevMatchDetails.mapTypes, function(mapType, ixMapType){
-			var map = prevMatchDetails.maps[mapType.key];
-			
-			_.each(map.objectives, function(obj, ixObj){
-				var curObj = matchDetails.maps[mapType.key].objectives[ixObj];
-				var oldObj = obj;				
-				
-				if(oldObj.owner){
-					if(oldObj.owner.name !== curObj.owner.name){
-						newObjectiveOwner(mapType.label, curObj, oldObj);
-					}
-					else if(oldObj.guildId && !curObj.guildId){
-						removeClaimer(mapType.label, curObj);
-					}
-					else if(oldObj.guildId !== curObj.guildId && curObj.guildId){
-						newObjectiveClaimer(mapType.label, curObj);
-					}
-				}
-			});
-		});
-	}
-	
-	
-	function newObjectiveOwner(mapName, curObj, oldObj){
-		var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
-		writeToLog(logHtml);
-		
-		var $li = $('#obj-' + curObj.id);
-		var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
-		var curSprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
-		
-		/*
-		var cssFrom =  	{backgroundColor: '#ffffcc'};
-		var cssTo = 	{backgroundColor: 'inherit'};
-			.animate(cssTo, 2*60*1000)
-		*/
-		
-		$li
-			.removeClass(oldObj.owner.color)
-			.addClass(curObj.owner.color)
-			.find('.guild')
-				.remove()
-			.end()
-			.find('.spriteSmall')
-				.removeClass(oldSprite)
-				.addClass(curSprite)
-			.end();
-			
-		if(curObj.guildId){
-			appendGuildToObjective(curObj);
-		}
-		
-		startReCapTimer(curObj);
-		
-		console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
-	};
-	
-	
-	function removeClaimer(mapName, curObj){
-		$('#obj-' + curObj.id)
-			.find('.guild')
-				.remove()
-			.end();
-			
-		console.log('Remove Claimer: ', mapName, curObj.name);
-	};
-	
-	
-	function newObjectiveClaimer(mapName, curObj){
-		if(curObj.guildId){
-			var logHtml = renderExternal('log-newClaimer', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj});
-			writeToLog(logHtml);
-			appendGuildToObjective(curObj);
-			
-			var guild = Anet.getGuild(curObj.guildId);
-			var guildName = (guild) ? guild.name : curObj.guildId;
-			
-			
-			console.log('New Claimer: ', mapName, curObj.name);
-			onGuildData();
-		}
-			
-	};
 	
 	function appendGuildToObjective(curObj){
 		var guild = Anet.getGuild(curObj.guildId);
@@ -515,6 +486,11 @@ var prevMatchDetails, prevIncomes;
 					var id = $that.data('id');
 					var obj = Anet.getObjectiveBy('id', id);
 					
+					// cache element to $objectives object for fast lookup
+					$objectives[id] = $that;
+					
+					
+					
 					var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
 					var spriteClass = 'sprite-' + objColor + '-' + obj.type;
 						
@@ -533,7 +509,8 @@ var prevMatchDetails, prevIncomes;
 							.replaceWith('<sup class="guild" data-guildid="' + obj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>')
 					}
 					else{
-						$that.find('.guild').remove();
+						$that.find('.guild')
+							.remove();
 					}
 				})
 			.end()
@@ -581,36 +558,52 @@ var prevMatchDetails, prevIncomes;
 	}
 	
 	
-	function startReCapTimer(curObj){
-		var $obj = $('#obj-' + curObj.id);
-		var $recapTimer = $obj.find('.recapTimer').fadeIn();
+	// first invoked by writeInitialDetails
+	var updateTimers = function updateTimers(){
+		var objectives = Anet.getObjectives()
+			, initTime = Anet.getInitTime()
+			, now = new Date();
 			
-		var now = new Date();
-		var expires = new Date();
+			
+		_.each(objectives, function(o, index){
+			var $li = $objectives[o.id]
+				, $timer = $li.find('.recapTimer')
+				, timerVisible = $timer.is(':visible')
+			
+			if(o.lastCaptured !== initTime){
+				var expires = new Date();
+				expires.setTime(o.lastCaptured.getTime() + (5 * 60 * 1000));
+				
+				var timeRemaining = expires.getTime() - now.getTime();
+				
+				if(timeRemaining <= 0 && timerVisible){
+					$timer.fadeOut();
+				}
+				else if (timeRemaining > 0 && !timerVisible){
+					$timer.fadeIn();
+				}
+				
+				if(timeRemaining > 0){
+					var timerText = minuteFormat(timeRemaining);
+					//console.log(timerText);
+					$timer.text(timerText);
+				}
+				
+				//console.log(o.lastCaptured.getTime(), expires.getTime(), now.getTime(), expires.getTime() > now.getTime(), timeRemaining, timerVisible);
+			}
+		});
 		
-		expires.setTime(now.getTime() + (5 * 60 * 1000));
-		
-		console.log('ReCap Timer Started: ', curObj.name, 'Expires: ', expires);
-		
-		timerCountdown($recapTimer, expires);
+		setTimeout(updateTimers, 1*1000);
 	};
 	
 	
-	function timerCountdown($recapTimer, expiration){
-		var now = new Date();
-		var remaining = expiration.getTime() - now.getTime();
-		
-		//console.log(now, expiration, remaining, minuteFormat(remaining));
-		
-		if(remaining > 0){
-			$recapTimer.text(minuteFormat(remaining));
-			setTimeout(function(){timerCountdown($recapTimer, expiration)}, 1000);
-		}
-		else{
-			$recapTimer.fadeOut();
-		}			
-	}
 	
+	
+	/*
+	 * 
+	 * 	User Interaction
+	 * 
+	 */
 	
 	$content.on('click tabClick', '#logTabs a', function(){
 		var $that = $(this);
@@ -646,10 +639,39 @@ var prevMatchDetails, prevIncomes;
 	});
 	
 	
+	$('#audioToggle').on('click', function(e){
+		e.preventDefault();
+		var $that = $(this);
+		
+		$that.data('enabled', !$that.data('enabled'));
+		
+		playNotification();
+		
+		if($that.data('enabled')){
+			$that.hide().html('<i class="icon-volume-up"></i>').fadeIn();
+		}
+		else{
+			$that.hide().html('<span class="icon-stack"><i class="icon-ban-circle icon-stack-base text-error"></i><i class="icon-volume-up"></i></span>').fadeIn();
+		}
+		
+		
+		
+		var gaData = {
+		  'hitType': 'event',				// Required.
+		  'eventCategory': 'Audio',			// Required.
+		  'eventAction': 'Toggle State',	// Required.
+		  'eventLabel': $that.data('enabled')
+		};
+		//console.log('Post To GA:', gaData);
+		ga('send', gaData);
+	})
+	
+	
+	
+	
 	function getLogMapToShow(){
 		return $('#logTabs li.active a').data('target') || 'all';
 	}
-	
 	
 	
 	function toggleTabTo(mapKey){
@@ -687,33 +709,6 @@ var prevMatchDetails, prevIncomes;
 		}
 	}
 	
-	$('#audioToggle').on('click', function(e){
-		e.preventDefault();
-		var $that = $(this);
-		
-		$that.data('enabled', !$that.data('enabled'));
-		
-		playNotification();
-		
-		if($that.data('enabled')){
-			$that.hide().html('<i class="icon-volume-up"></i>').fadeIn();
-		}
-		else{
-			$that.hide().html('<span class="icon-stack"><i class="icon-ban-circle icon-stack-base text-error"></i><i class="icon-volume-up"></i></span>').fadeIn();
-		}
-		
-		
-		
-		var gaData = {
-		  'hitType': 'event',				// Required.
-		  'eventCategory': 'Audio',			// Required.
-		  'eventAction': 'Toggle State',	// Required.
-		  'eventLabel': $that.data('enabled')
-		};
-		//console.log('Post To GA:', gaData);
-		ga('send', gaData);
-	})
-	
 	
 	
 	
@@ -733,10 +728,10 @@ var objGroups = {
 			alert: 'error'
 			, objectives: [
 				1			//overlook
+				, 20		//veloka
+				, 17		//mendons
 				, 18		//anz
 				, 19		//ogre
-				, 17		//mendons
-				, 20		//veloka
 				, 5			//pang
 				, 6			//speldan
 			]
@@ -745,10 +740,10 @@ var objGroups = {
 			alert: 'info'
 			, objectives: [
 				2			//valley
-				, 16		//quentin
-				, 21		//durios
 				, 22		//bravost
 				, 15		//langor
+				, 16		//quentin
+				, 21		//durios
 				, 8 		//umber
 				, 7			//dane
 			]
@@ -757,10 +752,10 @@ var objGroups = {
 			alert: 'success'
 			, objectives: [
 				3			//lowlands
-				, 12		//wildcreek
-				, 14		//klovan
 				, 13		//jerrifer
 				, 11		//aldons
+				, 14		//klovan
+				, 12		//wildcreek
 				, 4 		//golanta
 				, 10		//rogues
 			]

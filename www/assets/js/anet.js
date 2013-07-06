@@ -3,10 +3,22 @@
 var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	"use strict"
 	
-	var self = this; // more generic than referencing by function name AnetAPI
+	// more generic than referencing by function name AnetAPI
+	var self = this;
 	
-	// onInit, onWorldData, onMatchesData, onObjectivesData, onGuildData, onMatchData
-	self.listeners = arguments.listeners;
+	var nonListeners = { 
+		onInit: function(){}
+		, onWorldData: function(){}
+		, onMatchesData: function(){}
+		, onObjectivesData: function(){}
+		, onGuildData: function(){}
+		, onMatchData: function(){}
+		, onOwnerChange: function(){}
+		, onClaimerChange: function(){}
+	}; 
+	
+	// onInit, onWorldData, onMatchesData, onObjectivesData, onGuildData, onMatchData, onOwnerChange, onClaimerChange
+	self.listeners = $.extend({}, nonListeners, listeners);
 	
 	
 	/*
@@ -14,6 +26,8 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	 * properites
 	 * 
 	 */
+	this.initTime = new Date();
+	
 	
 	this.api = 'https://api.guildwars2.com/v1';	
 	this.apiSlugs = {
@@ -49,6 +63,10 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	/*
 	 * local getters
 	 */
+	
+	this.getInitTime = function(){
+		return self.initTime;
+	};
 	
 	this.getColors = function(){
 		return self.colors;
@@ -279,8 +297,8 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 				match_id: self.match.id
 			})
 			.done(function(data){
-				self.matchDetails = new MatchDetails(data);
-				queueMissingGuilds();
+				updateMatchDetails(new MatchDetails(data));
+				
 				//console.log('setMatchDetails() current details', self.matchDetails)
 				setTimeout(listeners.onMatchData, self.listenerDelayMS);
 			});
@@ -339,6 +357,93 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			}
 		})();
 	};
+	
+	
+	
+	
+	/*
+	 * 
+	 * 	merge incoming matchDetails with existing matchDetails
+	 * 
+	 */
+	
+	var updateMatchDetails = function (tmpMatchDetails){
+		var now = new Date();
+		
+		// if there's data to merge with
+		if(self.matchDetails){
+			var listenersToNotify = [];
+		
+			// look for changed objective owners and guild claimers
+			_.each(tmpMatchDetails.mapTypes, function(mapType, ixMapType){
+				var map = tmpMatchDetails.maps[mapType.key];
+				
+				_.each(map.objectives, function(obj, ixObj){
+					var curObj = tmpMatchDetails.maps[mapType.key].objectives[ixObj];
+					var oldObj = self.matchDetails.maps[mapType.key].objectives[ixObj];
+
+
+					if(oldObj.owner){
+						
+						var ownerChanged = (oldObj.owner.name !== curObj.owner.name);
+						var removedClaimer = (!!oldObj.guildId && !curObj.guildId);
+						var changedClaimer = (oldObj.guildId !== curObj.guildId && curObj.guildId);
+						
+						/*
+						console.log(
+							'Check for Events: '
+							, (!ownerChanged && !removedClaimer && !changedClaimer) ? 'No Change' : curObj.name + ' Changed '
+							, (ownerChanged) ? 'New Owner' : ''
+							, (removedClaimer) ? 'Removed Claimer' : ''
+							, (changedClaimer) ? 'Changed Claimer' : ''
+						);
+						*/
+						
+						if(ownerChanged){
+							curObj.prevOwner = oldObj.owner;
+							curObj.lastCaptured = now;
+							
+							var pushToListener = {method: 'onOwnerChange', args: [mapType.label, curObj, oldObj]};
+							listenersToNotify.push(pushToListener);
+							//console.log('ownerChanged: ', pushToListener);
+						}
+						
+						if(removedClaimer || changedClaimer){
+							var pushToListener = {method: 'onClaimerChange', args: [mapType.label, curObj, oldObj]};
+							listenersToNotify.push(pushToListener);
+							//console.log('claimerChanged: ', pushToListener);
+						}
+					}
+					
+				});
+			});
+			
+			
+			if(listenersToNotify.length){
+				notifyListeners(listenersToNotify);	
+			}
+		}
+		
+		
+		self.matchDetails = JSON.parse(JSON.stringify(tmpMatchDetails));
+		queueMissingGuilds();
+	}
+	
+	
+
+	/*
+	 * 
+	 * notifyListeners in queue
+	 * 
+	 */
+	
+	var notifyListeners = function(notifyQueue){	
+		_.each(notifyQueue, function(obj,i){
+			setTimeout(function(){
+				listeners[obj.method].apply(null, obj.args);
+			}, self.listenerDelayMS);
+		});
+	}
 	
 	
 
@@ -437,6 +542,11 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		this.id = obj.id;
 		this.generic = obj.name;
 		this.name = self.objectivesLookup[self.lang.slug][obj.id];
+		
+		this.lastCaptured = self.initTime;
+		this.owner = undefined;
+		this.prevOwner = undefined;
+		
 		
 		switch(this.generic.toLowerCase()){
 			
