@@ -72,6 +72,7 @@ var prevMatchDetails, prevIncomes;
 	
 	
 	
+	
 	/*
 	 * 
 	 * Common Views
@@ -100,6 +101,15 @@ var prevMatchDetails, prevIncomes;
 		console.log("** worldOptions_onInit()");
 		$indicator.stop().fadeOut();
 		writeWorldOptionsBase();
+		
+		
+		var gaData = {
+			'hitType': 'event',					// Required.
+			'eventCategory': 'App',				// Required.
+			'eventAction': 'Data Initialized',	// Required.
+			'nonInteraction': true
+		};
+		ga('send', gaData);
 	}
 	
 	function worldOptions_onWorldData(){
@@ -159,6 +169,14 @@ var prevMatchDetails, prevIncomes;
 	
 	function onInit(){
 		console.log('** onInit()');
+		
+		var gaData = {
+			'hitType': 'event',					// Required.
+			'eventCategory': 'App',				// Required.
+			'eventAction': 'Data Initialized',	// Required.
+			'nonInteraction': true
+		};
+		ga('send', gaData);
 	}
 	
 	function onMatchData(){
@@ -660,11 +678,41 @@ var prevMatchDetails, prevIncomes;
 		  'hitType': 'event',				// Required.
 		  'eventCategory': 'Audio',			// Required.
 		  'eventAction': 'Toggle State',	// Required.
-		  'eventLabel': $that.data('enabled')
+		  'eventLabel': ($that.data('enabled')) ? 'Enabled' : 'Disabled'
 		};
-		//console.log('Post To GA:', gaData);
 		ga('send', gaData);
 	})
+	
+	
+	
+	var windowHasFocus = 1;
+	$(window)
+		.on('focus', function(){
+			if(!windowHasFocus){
+				windowHasFocus = 1;			
+				console.log('window focus');
+				
+				var gaData = {
+				  'hitType': 'event',			// Required.
+				  'eventCategory': 'App',		// Required.
+				  'eventAction': 'Focus',		// Required.
+				  'eventLabel': 'Gained'
+				};
+				ga('send', gaData);
+			}
+		})
+		.on('blur', function(){
+			if(windowHasFocus){
+				windowHasFocus = 0;
+				var gaData = {
+				  'hitType': 'event',			// Required.
+				  'eventCategory': 'App',		// Required.
+				  'eventAction': 'Focus',		// Required.
+				  'eventLabel': 'Lost'
+				};
+				ga('send', gaData);
+			}
+		});
 	
 	
 	
