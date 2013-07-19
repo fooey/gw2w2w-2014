@@ -46,6 +46,19 @@ function renderExternal(template, templateData) {
 
 
 
+var randRange = function (rangeMin, rangeMax){
+	var randInRange = Math.round(
+		(
+			Math.random()
+			* (rangeMax - rangeMin)
+		)
+		+ rangeMin
+	);
+	return randInRange;
+}
+
+
+
 
 
 

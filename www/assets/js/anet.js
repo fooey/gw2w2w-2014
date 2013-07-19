@@ -424,8 +424,9 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			}
 		}
 		
-		
+		self.matchDetails = {};
 		self.matchDetails = JSON.parse(JSON.stringify(tmpMatchDetails));
+		tmpMatchDetails = {};
 		queueMissingGuilds();
 	}
 	
@@ -658,6 +659,9 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			
 			if (obj.objectives[i].owner_guild) {
 				objective.guildId = obj.objectives[i].owner_guild;
+			}
+			else if (objective.guildId){
+				delete objective.guildId;
 			}
 			
 			this.objectives.push(objective);
