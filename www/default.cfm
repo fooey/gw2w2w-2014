@@ -46,7 +46,7 @@
 		<ul class="nav pull-right" id="quickNav">
 			<li id="indicator" class="navbarIcon muted"><i class="icon-spinner icon-spin hide"></i></li>
 			<li class="divider-vertical"></li>
-			<li id="audioToggle" class="navbarIcon muted" data-enabled="false"><span class="icon-stack"><i class="icon-ban-circle icon-stack-base text-error"></i><i class="icon-volume-up"></i></span></li>
+			<li id="audioToggle" class="navbarIcon muted" data-enabled="true"><i class="icon-volume-up"></i></li>
 			<li class="divider-vertical"></li>
 			<li class="hide"><a href="<cfoutput>/#url.lang#</cfoutput>"><i class="icon-globe"></i> Select World</a></li>
 			<li class="divider-vertical hide"></li>
