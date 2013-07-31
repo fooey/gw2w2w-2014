@@ -205,6 +205,12 @@ li.objective{
 li.objective.highlight{
 	background-color: #ffc;
 }
+li.objective .objName{
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 155px;
+}
 
 li.objective .recapTimer{
 	color: #300;
@@ -291,8 +297,8 @@ li.objective .recapTimer.unknown{
 
 .log .timeStamp		{width: 7%;}
 .log .mapName		{width: 18%;}
-.log .objName		{width: 25%;}
-.log .objectiveEvent{width: 50%;}
+.log .objName		{width: 35%;}
+.log .objectiveEvent{width: 40%;}
 
 #audioToggle label{
 	display: inline-block;
