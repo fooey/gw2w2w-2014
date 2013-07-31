@@ -10,7 +10,7 @@
 				<ul class="nav nav-list <% if(currentLang === worldLang[0].lang.toLowerCase()){ print('active') }; %>">
 					<li class="nav-header"><%= lang %></li>
 					<% _.each(worldLang, function(world) { %>
-						<li><a href="<%= world.href %>"><%= world.name %></a></li>
+						<li><a href="<%= world.href %>"><%= world.name %></a> </li>
 					<% }); %>
 				</ul>
 			<% } %>
@@ -25,7 +25,7 @@
 				<ul class="nav nav-list <% if(currentLang === 'en'){ print('active') }; %>">
 					<li class="nav-header">English</li>
 					<% _.each(worlds.EU.English, function(world, lang) { %>
-						<li><a href="<%= world.href %>"><%= world.name %></a></li>
+						<li><a href="<%= world.href %>"><%= world.name %></a> </li>
 					<% }); %>
 				</ul>
 			</div>

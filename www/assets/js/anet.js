@@ -655,7 +655,16 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			//console.log('set objective: ', objective, obj.objectives[i]);
 			
 			objective.owner = getWorldBy('color', obj.objectives[i].owner);
-			objective.mapKey = this.mapKey;
+			
+			if(!objective.mapKey){
+				objective.mapKey = this.mapKey;
+				
+				if(objective.mapKey !== 'Center' && objective.type === 'camp'){
+					objective.name = objective.generic + ': ' + objective.name;
+				}
+			}
+			
+			
 			
 			if (obj.objectives[i].owner_guild) {
 				objective.guildId = obj.objectives[i].owner_guild;
