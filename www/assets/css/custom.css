@@ -372,3 +372,37 @@ li.objective .recapTimer.unknown{
 .spriteSmall.sprite-red-castle		{ background-position: -16px -46px; }
 .spriteSmall.sprite-red-keep		{ background-position: -31px -46px; }
 .spriteSmall.sprite-red-tower		{ background-position: -46px -46px; }
+
+
+
+
+.sprite2small {
+	background-image: url(/assets/img/icons/sprite2.png);
+	background-repeat: no-repeat;
+	background-size: 60px 60px;
+	display: inline-block;
+	vertical-align: middle;
+	width: 15px;
+	height: 15px;
+	
+	background-position: 0 0; //default
+}
+.sprite2small.sprite-red-castle		{ background-position: 0 0; }
+.sprite2small.sprite-red-keep		{ background-position: 0 -15px; }
+.sprite2small.sprite-red-tower		{ background-position: 0 -30px; }
+.sprite2small.sprite-red-camp		{ background-position: 0 -45px; }
+
+.sprite2small.sprite-blue-castle	{ background-position: -15px 0; }
+.sprite2small.sprite-blue-keep		{ background-position: -15px -15px; }
+.sprite2small.sprite-blue-tower		{ background-position: -15px -30px; }
+.sprite2small.sprite-blue-camp		{ background-position: -15px -45px; }
+
+.sprite2small.sprite-green-castle	{ background-position: -30px 0; }
+.sprite2small.sprite-green-keep		{ background-position: -30px -15px; }
+.sprite2small.sprite-green-tower	{ background-position: -30px -30px; }
+.sprite2small.sprite-green-camp		{ background-position: -30px -45px; }
+
+.sprite2small.sprite-base-castle	{ background-position: -45px 0; }
+.sprite2small.sprite-base-keep		{ background-position: -45px -15px; }
+.sprite2small.sprite-base-tower		{ background-position: -45px -30px; }
+.sprite2small.sprite-base-camp		{ background-position: -45px -45px; }

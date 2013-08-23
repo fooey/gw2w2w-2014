@@ -388,7 +388,7 @@ function onOwnerChange(mapName, curObj, oldObj){
 	$li
 		.removeClass(oldObj.owner.color)
 		.addClass(curObj.owner.color)
-		.find('.spriteSmall')
+		.find('.sprite2small')
 			.removeClass(oldSprite)
 			.addClass(curSprite)
 		.end();
@@ -511,7 +511,7 @@ function writeInitialDetails(matchDetails){
 						.attr('title', obj.name)
 						.html(obj.name)
 					.end()
-					.find('.spriteSmall')
+					.find('.sprite2small')
 						.attr('title', obj.name)
 						.addClass(spriteClass)
 					.end()
