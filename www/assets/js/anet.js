@@ -120,10 +120,10 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	}
 	
 	this.objectivesLookup = {
-		'en': ",Overlook,Valley,Lowlands,Golanta Clearing,Pangloss Rise,Speldan Clearcut,Danelon Passage,Umberglade Woods,Stonemist Castle,Rogue's Quarry,Aldon's Ledge,Wildcreek Run,Jerrifer's Slough,Klovan Gully,Langor Gulch,Quentin Lake,Mendon's Gap,Anzalias Pass,Ogrewatch Cut,Veloka Slope,Durios Gulch, Bravost Escarpment,Garrison,Champion's Demense,Redbriar,Greenlake,Ascension Bay,Dawn's Eyrie,The Spiritholme,Woodhaven,Askalion Hills,Etheron Hills,Dreaming Bay,Victor's Lodge,Greenbriar,Bluelake,Garrison,Longview,The Godsword,Cliffside,Shadaran Hills,Redlake,Hero's Lodge,Dreadfall Bay,Bluebriar,Garrison,Sunnyhill,Faithleap,Bluevale Refuge,Bluewater Lowlands,Astralholme,Arah's Hope,Greenvale Refuge,Foghaven,Redwater Lowlands,The Titanpaw,Cragtop,Godslore,Redvale Refuge,Stargrove,Greenwater Lowlands".split(',')
-		, 'fr': ",Belvédère,Vallée,Basses terres,Clairière de Golanta,Montée de Pangloss,Forêt rasée de Speldan,Passage Danelon,Bois d'Ombreclair,Château Brumepierre,Carrière des voleurs,Corniche d'Aldon,Piste du Ruisseau sauvage,Bourbier de Jerrifer,Petit ravin de Klovan,Ravin de Langor,Lac Quentin,Faille de Mendon,Col d'Anzalias,Percée de Gardogre,Flanc de Veloka,Ravin de Durios,Falaise de Bravost,Garnison,Fief du champion,Bruyerouge,Lac Vert,Baie de l'Ascension,Promontoire de l'aube,L'antre des esprits,Gentesylve,Collines d'Askalion,Collines d'Etheron,Baie des rêves,Pavillon du vainqueur,Vertebranche,Lac bleu,Garnison,Longuevue,L'Epée divine,Flanc de falaise,Collines de Shadaran,Rougelac,Pavillon du Héros,Baie du Noir déclin,Bruyazur,Garnison,Colline ensoleillée,Ferveur,Refuge de bleuval,Basses terres d'Eau-Azur,Astralholme,Espoir d'Arah,Refuge de Valvert,Havre gris,Basses terres de Rubicon,Bras du titan,Sommet de l'escarpement,Divination,Refuge de Valrouge,Bosquet stellaire,Basses terres d'Eau-Verdoyante".split(',')
-		, 'es': ",Mirador,Valle,Vega,Claro Golanta,Colina Pangloss,Claro Espeldia,Pasaje Danelon,Bosques Clarosombra,Castillo Piedraniebla,Cantera del Pícaro,Cornisa de Aldon,Pista Arroyosalvaje,Cenagal de Jerrifer,Barranco Klovan,Barranco Langor,Lago Quentin,Zanja de Mendon,Paso Anzalias,Tajo de la Guardia del Ogro,Pendiente Veloka,Barranco Durios,Escarpadura Bravost,Fuerte,Dominio del Campeón,Zarzarroja,Lagoverde,Bahía de la Ascensión,Aguilera del Alba,La Isleta Espiritual,Refugio Forestal,Colinas Askalion,Colinas Etheron,Bahía Onírica,Albergue del Vencedor,Zarzaverde,Lagoazul,Fuerte,Vistaluenga,La Hoja Divina,Despeñadero,Colinas Shadaran,Lagorrojo,Albergue del Héroe,Bahía Salto Aciago,Zarzazul,Fuerte,Colina Soleada,Salto de Fe,Refugio Valleazul,Tierras Bajas de Aguazul,Isleta Astral,Esperanza de Arah,Refugio de Valleverde,Refugio Neblinoso,Tierras Bajas de Aguarroja,La Garra del Titán,Cumbrepeñasco,Sabiduría de los Dioses,Refugio Vallerojo,Arboleda de las Estrellas,Tierras Bajas de Aguaverde".split(',')
-		, 'de': ",Aussichtspunkt,Tal,Tiefland,Golanta-Lichtung,Pangloss-Anhöhe,Speldan Kahlschlag,Danelon-Passage,Umberlichtung-Forst,Schloss Steinnebel,Schurkenbruch,Aldons Vorsprung,Wildbachstrecke,Jerrifers Sumpfloch,Klovan-Senke,Langor - Schlucht,Quentinsee,Mendons Spalt,Anzalias-Pass,Ogerwacht-Kanal,Veloka-Hang,Durios-Schlucht,Bravost-Abhang,Festung,Landgut des Champions,Rotdornstrauch,Grünsee,Bucht des Aufstiegs,Horst der Morgendammerung,Der Geisterholm,Wald - Freistatt,Askalion - Hügel,Etheron - Hügel,Traumbucht,Sieger - Hütte,Grünstrauch,Blausee,Festung,Weitsicht,Das Gottschwert,Felswand,Shadaran Hügel,Rotsee,Hütte des Helden,Schreckensfall - Bucht,Blaudornstrauch,Festung,Sonnenlichthügel,Glaubenssprung,Blautal - Zuflucht,Blauwasser - Tiefland,Astralholm,Arahs Hoffnung,Grüntal - Zuflucht,Nebel - Freistatt,Rotwasser - Tiefland,Die Titanenpranke,Felsenspitze,Götterkunde,Rottal - Zuflucht,Sternenhain,Grünwasser - Tiefland".split(',')
+		'en': ",Overlook,Valley,Lowlands,Golanta Clearing,Pangloss Rise,Speldan Clearcut,Danelon Passage,Umberglade Woods,Stonemist Castle,Rogue's Quarry,Aldon's Ledge,Wildcreek Run,Jerrifer's Slough,Klovan Gully,Langor Gulch,Quentin Lake,Mendon's Gap,Anzalias Pass,Ogrewatch Cut,Veloka Slope,Durios Gulch, Bravost Escarpment,Garrison,Champion's Demense,Redbriar,Greenlake,Ascension Bay,Dawn's Eyrie,The Spiritholme,Woodhaven,Askalion Hills,Etheron Hills,Dreaming Bay,Victor's Lodge,Greenbriar,Bluelake,Garrison,Longview,The Godsword,Cliffside,Shadaran Hills,Redlake,Hero's Lodge,Dreadfall Bay,Bluebriar,Garrison,Sunnyhill,Faithleap,Bluevale Refuge,Bluewater Lowlands,Astralholme,Arah's Hope,Greenvale Refuge,Foghaven,Redwater Lowlands,The Titanpaw,Cragtop,Godslore,Redvale Refuge,Stargrove,Greenwater Lowlands,Temple of Lost Prayers,Battle's Hollow,Bauer's Estate,Orchard Overlook,Carver's Ascent,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers".split(',')
+		, 'fr': ",Belvédère,Vallée,Basses terres,Clairière de Golanta,Montée de Pangloss,Forêt rasée de Speldan,Passage Danelon,Bois d'Ombreclair,Château Brumepierre,Carrière des voleurs,Corniche d'Aldon,Piste du Ruisseau sauvage,Bourbier de Jerrifer,Petit ravin de Klovan,Ravin de Langor,Lac Quentin,Faille de Mendon,Col d'Anzalias,Percée de Gardogre,Flanc de Veloka,Ravin de Durios,Falaise de Bravost,Garnison,Fief du champion,Bruyerouge,Lac Vert,Baie de l'Ascension,Promontoire de l'aube,L'antre des esprits,Gentesylve,Collines d'Askalion,Collines d'Etheron,Baie des rêves,Pavillon du vainqueur,Vertebranche,Lac bleu,Garnison,Longuevue,L'Epée divine,Flanc de falaise,Collines de Shadaran,Rougelac,Pavillon du Héros,Baie du Noir déclin,Bruyazur,Garnison,Colline ensoleillée,Ferveur,Refuge de bleuval,Basses terres d'Eau-Azur,Astralholme,Espoir d'Arah,Refuge de Valvert,Havre gris,Basses terres de Rubicon,Bras du titan,Sommet de l'escarpement,Divination,Refuge de Valrouge,Bosquet stellaire,Basses terres d'Eau-Verdoyante,Temple of Lost Prayers,Battle's Hollow,Bauer's Estate,Orchard Overlook,Carver's Ascent,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers".split(',')
+		, 'es': ",Mirador,Valle,Vega,Claro Golanta,Colina Pangloss,Claro Espeldia,Pasaje Danelon,Bosques Clarosombra,Castillo Piedraniebla,Cantera del Pícaro,Cornisa de Aldon,Pista Arroyosalvaje,Cenagal de Jerrifer,Barranco Klovan,Barranco Langor,Lago Quentin,Zanja de Mendon,Paso Anzalias,Tajo de la Guardia del Ogro,Pendiente Veloka,Barranco Durios,Escarpadura Bravost,Fuerte,Dominio del Campeón,Zarzarroja,Lagoverde,Bahía de la Ascensión,Aguilera del Alba,La Isleta Espiritual,Refugio Forestal,Colinas Askalion,Colinas Etheron,Bahía Onírica,Albergue del Vencedor,Zarzaverde,Lagoazul,Fuerte,Vistaluenga,La Hoja Divina,Despeñadero,Colinas Shadaran,Lagorrojo,Albergue del Héroe,Bahía Salto Aciago,Zarzazul,Fuerte,Colina Soleada,Salto de Fe,Refugio Valleazul,Tierras Bajas de Aguazul,Isleta Astral,Esperanza de Arah,Refugio de Valleverde,Refugio Neblinoso,Tierras Bajas de Aguarroja,La Garra del Titán,Cumbrepeñasco,Sabiduría de los Dioses,Refugio Vallerojo,Arboleda de las Estrellas,Tierras Bajas de Aguaverde,Temple of Lost Prayers,Battle's Hollow,Bauer's Estate,Orchard Overlook,Carver's Ascent,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers".split(',')
+		, 'de': ",Aussichtspunkt,Tal,Tiefland,Golanta-Lichtung,Pangloss-Anhöhe,Speldan Kahlschlag,Danelon-Passage,Umberlichtung-Forst,Schloss Steinnebel,Schurkenbruch,Aldons Vorsprung,Wildbachstrecke,Jerrifers Sumpfloch,Klovan-Senke,Langor - Schlucht,Quentinsee,Mendons Spalt,Anzalias-Pass,Ogerwacht-Kanal,Veloka-Hang,Durios-Schlucht,Bravost-Abhang,Festung,Landgut des Champions,Rotdornstrauch,Grünsee,Bucht des Aufstiegs,Horst der Morgendammerung,Der Geisterholm,Wald - Freistatt,Askalion - Hügel,Etheron - Hügel,Traumbucht,Sieger - Hütte,Grünstrauch,Blausee,Festung,Weitsicht,Das Gottschwert,Felswand,Shadaran Hügel,Rotsee,Hütte des Helden,Schreckensfall - Bucht,Blaudornstrauch,Festung,Sonnenlichthügel,Glaubenssprung,Blautal - Zuflucht,Blauwasser - Tiefland,Astralholm,Arahs Hoffnung,Grüntal - Zuflucht,Nebel - Freistatt,Rotwasser - Tiefland,Die Titanenpranke,Felsenspitze,Götterkunde,Rottal - Zuflucht,Sternenhain,Grünwasser - Tiefland,Temple of Lost Prayers,Battle's Hollow,Bauer's Estate,Orchard Overlook,Carver's Ascent,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers,Carver's Ascent,Orchard Overlook,Bauer's Estate,Battle's Hollow,Temple of Lost Prayers".split(',')
 	};
 	
 	this.getObjectiveBy = function(key,val){
@@ -156,7 +156,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		depth = depth || 0;
 		
 		if(++depth > self.recheckMaxAttempts){
-			alert('Failed to acquire Worlds Data')
+			notice('Data Error','Failed to acquire Worlds Data');
 		}
 		else if (!self.worlds) {
 			console.log('setWorld() waiting for data');
@@ -176,7 +176,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		depth = depth || 0;
 		
 		if(++depth > self.recheckMaxAttempts){
-			alert('Failed to acquire Match Data')
+			notice('Data Error','Failed to acquire Match Data');
 		}
 		else if (!self.world || !self.matches) {
 			console.log('setMatch() waiting for data');
@@ -206,7 +206,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		  , done: onDone
 		})
 		.error(function(ajaxData){
-			alert('ERROR: Remote data request failed for ' + slug)
+			notice('Data Error','ERROR: Remote data request failed for ' + slug);
 		});
 		
 		return request;
@@ -239,7 +239,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		depth = depth || 0;
 		
 		if(++depth > self.recheckMaxAttempts){
-			alert('Failed to acquire Matches Data')
+			notice('Data Error','Failed to acquire Matches Data');
 		}
 		else if (!self.worlds) {
 			console.log('setMatches() waiting for data');
@@ -270,9 +270,31 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	};
 	
 	var setObjectives = function(){
+		
 		get('objectives', {lang: self.lang.slug})
 			.done(function(data){
 				self.objectives = [];
+				
+				var tmpRuins = [
+					{"id":"62","name":"Ruin"}
+					, {"id":"63","name":"Ruin"}
+					, {"id":"64","name":"Ruin"}
+					, {"id":"65","name":"Ruin"}
+					, {"id":"66","name":"Ruin"}
+					, {"id":"67","name":"Ruin"}
+					, {"id":"68","name":"Ruin"}
+					, {"id":"69","name":"Ruin"}
+					, {"id":"70","name":"Ruin"}
+					, {"id":"71","name":"Ruin"}
+					, {"id":"72","name":"Ruin"}
+					, {"id":"73","name":"Ruin"}
+					, {"id":"74","name":"Ruin"}
+					, {"id":"75","name":"Ruin"}
+					, {"id":"76","name":"Ruin"}
+				];
+				
+				data.push.apply(data, tmpRuins);
+				
 				
 				_.each(data, function(obj, i){
 					self.objectives.push(new Objective(obj));
@@ -286,7 +308,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		depth = depth || 0;
 		
 		if(++depth > self.recheckMaxAttempts){
-			alert('Failed to acquire Matches Data')
+			notice('Data Error','Failed to acquire Matches Data');
 		}
 		else if (!self.match || !self.objectives) {
 			setTimeout(function(){setMatchDetails(depth)}, self.recheckDelayMS);
@@ -347,7 +369,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			depth = depth || 0;
 			
 			if(++depth > 30){
-				alert('Failed to acquire Guild Data')
+				notice('Data Error','Failed to acquire Guild Data');
 			}
 			else if (guildQueue.length) {
 				setTimeout(function(){guildDataLoading(depth)}, self.recheckDelayMS);
@@ -545,40 +567,63 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		this.name = self.objectivesLookup[self.lang.slug][obj.id];
 		
 		this.lastCaptured = self.initTime;
-		this.owner = undefined;
+		this.owner = {name:'Default', color: 'base'};
 		this.prevOwner = undefined;
 		
-		
-		switch(this.generic.toLowerCase()){
-			
-			case 'castle':
-			case 'schloss':		//de
-			case 'château':		//fr
-			case 'castillo':	//es
-				this.type = 'castle';
-				this.points = 35;
-				break;
+		if(this.id >= 62 && this.id <= 76){
+			if(this.id == 62 || this.id == 71 || this.id == 76){
+				this.type = 'temple';
+				this.points = 0;
+			}
+			else if(this.id == 63 || this.id == 70 || this.id == 75){
+				this.type = 'hollow';
+				this.points = 0;
+			}
+			else if(this.id == 64 || this.id == 69 || this.id == 74){
+				this.type = 'estate';
+				this.points = 0;
+			}
+			else if(this.id == 65 || this.id == 68 || this.id == 73){
+				this.type = 'overlook';
+				this.points = 0;
+			}
+			else if(this.id == 66 || this.id == 67 || this.id == 72){
+				this.type = 'ascent';
+				this.points = 0;
+			}
+		}
+		else{
+			switch(this.generic.toLowerCase()){
 				
-			case 'keep':
-			case 'feste':		//de
-			case 'fort':		//fr
-			case 'fortaleza':	//es
-				this.type = 'keep';
-				this.points = 25;
-				break;
-			
-			case 'tower':
-			case 'turm':		//de
-			case 'tour':		//fr
-			case 'torre':		//es
-				this.type = 'tower'
-				this.points = 10;
-				break;
+				case 'castle':
+				case 'schloss':		//de
+				case 'château':		//fr
+				case 'castillo':	//es
+					this.type = 'castle';
+					this.points = 35;
+					break;
+					
+				case 'keep':
+				case 'feste':		//de
+				case 'fort':		//fr
+				case 'fortaleza':	//es
+					this.type = 'keep';
+					this.points = 25;
+					break;
 				
-			case 'camp':
-			default:
-				this.type = 'camp';
-				this.points = 5;
+				case 'tower':
+				case 'turm':		//de
+				case 'tour':		//fr
+				case 'torre':		//es
+					this.type = 'tower'
+					this.points = 10;
+					break;
+					
+				case 'camp':
+				default:
+					this.type = 'camp';
+					this.points = 5;
+			}
 		}
 	
 		return this;	
@@ -723,9 +768,6 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 				setMatchDetails();
 			}
 		}
-		
-
-		
 				
 		setTimeout(listeners.onInit, self.listenerDelayMS);
 		
@@ -734,3 +776,20 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	
 	return self;
 };
+
+
+function notice(title, message){
+	if($ && $.pnotify){
+		$.pnotify.defaults.history = false;
+		
+		$.pnotify({
+			title: title,
+			text: message,
+			type: 'error',
+			opacity: .7
+		});
+	}
+	else{
+		console.log('***NOTICE***', title, message)
+	}
+}

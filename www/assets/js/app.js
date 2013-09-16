@@ -500,33 +500,33 @@ function writeInitialDetails(matchDetails){
 				// cache element to $objectives object for fast lookup
 				$objectives[id] = $that;
 				
-				
-				
-				var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
-				var spriteClass = 'sprite-' + objColor + '-' + obj.type;
-					
-				$that
-					.addClass(objColor)
-					.find('.objName')
-						.attr('title', obj.name)
-						.html(obj.name)
-					.end()
-					.find('.sprite2small')
-						.attr('title', obj.name)
-						.addClass(spriteClass)
-					.end()
-					.find('.recapTimer')
-						.html('?:??')
-						.addClass('unknown')
-					.end();
+				if(obj){
+					var objColor = (obj.hasOwnProperty('owner') && obj.owner.hasOwnProperty('color')) ? obj.owner.color : 'base';
+					var spriteClass = 'sprite-' + objColor + '-' + obj.type;
 						
-				if(obj.guildId){
-					$that.find('.guild')
-						.replaceWith('<sup class="guild" data-guildid="' + obj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>')
-				}
-				else{
-					$that.find('.guild')
-						.remove();
+					$that
+						.addClass(objColor)
+						.find('.objName')
+							.attr('title', obj.name)
+							.html(obj.name)
+						.end()
+						.find('.sprite2small')
+							.attr('title', obj.name)
+							.addClass(spriteClass)
+						.end()
+						.find('.recapTimer')
+							.html('?:??')
+							.addClass('unknown')
+						.end();
+							
+					if(obj.guildId){
+						$that.find('.guild')
+							.replaceWith('<sup class="guild" data-guildid="' + obj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>')
+					}
+					else{
+						$that.find('.guild')
+							.remove();
+					}
 				}
 			})
 		.end()
@@ -641,8 +641,10 @@ function calculateIncomes(matchDetails){
 	
 	_.each(objectives, function(obj, i){
 		var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
-		incomes.overall[objColor] += obj.points;
-		incomes.maps[obj.mapKey][objColor] += obj.points;
+		if(objColor != 'base'){
+			incomes.overall[objColor] += obj.points;
+			incomes.maps[obj.mapKey][objColor] += obj.points;
+		}
 	});
 	
 	
@@ -899,6 +901,16 @@ var objGroups = {
 				, 51		//astral
 			]
 		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				62			//temple
+				, 63		//hollow
+				, 64		//estate
+				, 65		//orchard
+				, 66 		//ascent
+			]
+		}
 		,'South':{
 			alert: 'well'
 			, objectives: [
@@ -925,6 +937,16 @@ var objGroups = {
 				, 60		//star
 			]
 		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				71			//temple
+				, 70		//hollow
+				, 69		//estate
+				, 68		//orchard
+				, 67 		//ascent
+			]
+		}
 		,'South':{
 			alert: 'well'
 			, objectives: [
@@ -949,6 +971,16 @@ var objGroups = {
 				, 56 		//titan
 				, 48		//faith
 				, 54		//fog
+			]
+		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				76			//temple
+				, 75		//hollow
+				, 74		//estate
+				, 73		//orchard
+				, 72 		//ascent
 			]
 		}
 		,'South':{

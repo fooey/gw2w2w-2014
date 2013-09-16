@@ -45,6 +45,7 @@ body{
 .team.red{color: #b94a48 !important}
 .team.blue{color: #3a87ad !important}
 .team.green{color: #468847 !important}
+.team.base{color: #999 !important; font-style: italic;}
 
 
 /*
@@ -314,95 +315,54 @@ li.objective .recapTimer.unknown{
 
 
 
-
-.sprite {
-	background-image: url(/assets/img/icons/sprite.png);
-	background-repeat: no-repeat;
-	background-size: 120px 120px;
-	display: inline-block;
-	vertical-align: middle;
-	width: 26px;
-	height: 26px;
-	
-	background-position: -2px -2px; //default
-}
-.sprite.sprite-base-camp 		{ background-position: -2px -2px; }
-.sprite.sprite-base-castle		{ background-position: -32px -2px; }
-.sprite.sprite-base-keep		{ background-position: -62px -2px; }
-.sprite.sprite-base-tower		{ background-position: -92px -2px; }
-.sprite.sprite-blue-camp		{ background-position: -2px -32px; }
-.sprite.sprite-blue-castle		{ background-position: -32px -32px; }
-.sprite.sprite-blue-keep		{ background-position: -62px -32px; }
-.sprite.sprite-blue-tower		{ background-position: -92px -32px; }
-.sprite.sprite-green-camp		{ background-position: -2px -62px; }
-.sprite.sprite-green-castle	{ background-position: -32px -62px; }
-.sprite.sprite-green-keep		{ background-position: -62px -62px; }
-.sprite.sprite-green-tower		{ background-position: -92px -62px; }
-.sprite.sprite-red-camp		{ background-position: -2px -92px; }
-.sprite.sprite-red-castle		{ background-position: -32px -92px; }
-.sprite.sprite-red-keep		{ background-position: -62px -92px; }
-.sprite.sprite-red-tower		{ background-position: -92px -92px; }
-
-
-.spriteSmall {
-	background-image: url(/assets/img/icons/sprite.png);
-	background-repeat: no-repeat;
-	background-size: 120px 120px;
-	display: inline-block;
-	vertical-align: middle;
-	background-size: 60px 60px;
-    width: 13px;
-    height: 13px;
-	
-	background-position: -1px -1px; // default
-}
-.spriteSmall.sprite-base-camp		{ background-position: -1px -1px; }
-.spriteSmall.sprite-base-castle		{ background-position: -16px -1px; }
-.spriteSmall.sprite-base-keep		{ background-position: -31px -1px; }
-.spriteSmall.sprite-base-tower		{ background-position: -46px -1px; }
-.spriteSmall.sprite-blue-camp		{ background-position: -1px -16px; }
-.spriteSmall.sprite-blue-castle		{ background-position: -16px -16px; }
-.spriteSmall.sprite-blue-keep		{ background-position: -31px -16px; }
-.spriteSmall.sprite-blue-tower		{ background-position: -46px -16px; }
-.spriteSmall.sprite-green-camp		{ background-position: -1px -31px; }
-.spriteSmall.sprite-green-castle	{ background-position: -16px -31px; }
-.spriteSmall.sprite-green-keep		{ background-position: -31px -31px; }
-.spriteSmall.sprite-green-tower		{ background-position: -46px -31px;; }
-.spriteSmall.sprite-red-camp		{ background-position: -1px -46px; }
-.spriteSmall.sprite-red-castle		{ background-position: -16px -46px; }
-.spriteSmall.sprite-red-keep		{ background-position: -31px -46px; }
-.spriteSmall.sprite-red-tower		{ background-position: -46px -46px; }
-
-
-
-
 .sprite2small {
-	background-image: url(/assets/img/icons/sprite2.png);
+	background-image: url(/assets/img/icons/sprite3.png);
 	background-repeat: no-repeat;
-	background-size: 60px 60px;
+	background-size: 60px 135px;
 	display: inline-block;
 	vertical-align: middle;
 	width: 15px;
 	height: 15px;
 	
-	background-position: 0 0; //default
+	background-position: -45px -45px; //default
 }
 .sprite2small.sprite-red-castle		{ background-position: 0 0; }
 .sprite2small.sprite-red-keep		{ background-position: 0 -15px; }
 .sprite2small.sprite-red-tower		{ background-position: 0 -30px; }
 .sprite2small.sprite-red-camp		{ background-position: 0 -45px; }
+.sprite2small.sprite-red-temple		{ background-position: 0 -60px; }
+.sprite2small.sprite-red-temple		{ background-position: 0 -60px; }
+.sprite2small.sprite-red-hollow		{ background-position: 0 -75px; }
+.sprite2small.sprite-red-estate		{ background-position: 0 -90px; }
+.sprite2small.sprite-red-overlook	{ background-position: 0 -105px; }
+.sprite2small.sprite-red-ascent		{ background-position: 0 -120px; }
 
 .sprite2small.sprite-blue-castle	{ background-position: -15px 0; }
 .sprite2small.sprite-blue-keep		{ background-position: -15px -15px; }
 .sprite2small.sprite-blue-tower		{ background-position: -15px -30px; }
 .sprite2small.sprite-blue-camp		{ background-position: -15px -45px; }
+.sprite2small.sprite-blue-temple	{ background-position: -15px -60px; }
+.sprite2small.sprite-blue-hollow	{ background-position: -15px -75px; }
+.sprite2small.sprite-blue-estate	{ background-position: -15px -90px; }
+.sprite2small.sprite-blue-overlook	{ background-position: -15px -105px; }
+.sprite2small.sprite-blue-ascent	{ background-position: -15px -120px; }
 
 .sprite2small.sprite-green-castle	{ background-position: -30px 0; }
 .sprite2small.sprite-green-keep		{ background-position: -30px -15px; }
 .sprite2small.sprite-green-tower	{ background-position: -30px -30px; }
 .sprite2small.sprite-green-camp		{ background-position: -30px -45px; }
+.sprite2small.sprite-green-temple	{ background-position: -30px -60px; }
+.sprite2small.sprite-green-hollow	{ background-position: -30px -75px; }
+.sprite2small.sprite-green-estate	{ background-position: -30px -90px; }
+.sprite2small.sprite-green-overlook	{ background-position: -30px -105px; }
+.sprite2small.sprite-green-ascent	{ background-position: -30px -120px; }
 
 .sprite2small.sprite-base-castle	{ background-position: -45px 0; }
 .sprite2small.sprite-base-keep		{ background-position: -45px -15px; }
 .sprite2small.sprite-base-tower		{ background-position: -45px -30px; }
 .sprite2small.sprite-base-camp		{ background-position: -45px -45px; }
+.sprite2small.sprite-base-temple	{ background-position: -45px -60px; }
+.sprite2small.sprite-base-hollow	{ background-position: -45px -75px; }
+.sprite2small.sprite-base-estate	{ background-position: -45px -90px; }
+.sprite2small.sprite-base-overlook	{ background-position: -45px -105px; }
+.sprite2small.sprite-base-ascent	{ background-position: -45px -120px; }

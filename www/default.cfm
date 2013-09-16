@@ -5,6 +5,7 @@
 	local.cssPaths = [
 		expandPath('/siteroot/assets/css/bootstrap.min.css')
 		, expandPath('/siteroot/assets/css/font-awesome.min.css')
+		, expandPath('/siteroot/assets/plugins/jquery.pnotify.default.css')
 		, expandPath('/siteroot/assets/css/custom.css')
 	];
 	local.cssPaths.addAll(request.cssAppend);
@@ -72,6 +73,7 @@
 		expandPath('/siteroot/assets/js/app.js')
 		, expandPath('/siteroot/assets/js/lib.js')
 		, expandPath('/siteroot/assets/js/anet.js')
+		, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
 		//, '/assets/js/bootstrap.min.js'
 		//, '/assets/js/store+json2.min.js'
 	];
