@@ -377,7 +377,8 @@ function onGuildData(){
 
 function onOwnerChange(mapName, curObj, oldObj){
 	var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
-	writeToLog(logHtml);
+	var playAudio = (curObj.generic == 'Ruin') ? false : true;
+	writeToLog(logHtml, playAudio);
 	
 	var $li = $objectives[curObj.id];
 	var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
@@ -397,7 +398,7 @@ function onOwnerChange(mapName, curObj, oldObj){
 		appendGuildToObjective(curObj);
 	}
 	
-	console.log('New Owner: ', mapName, curObj.mapKey, curObj.owner.name, oldObj.owner.name);
+	console.log('New Owner: ', mapName, curObj.mapKey, curObj.name, curObj.owner.name, oldObj.owner.name, 'playAudio', playAudio);
 }
 
 
@@ -501,7 +502,7 @@ function writeInitialDetails(matchDetails){
 				$objectives[id] = $that;
 				
 				if(obj){
-					var objColor = (obj.hasOwnProperty('owner') && obj.owner.hasOwnProperty('color')) ? obj.owner.color : 'base';
+					var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
 					var spriteClass = 'sprite-' + objColor + '-' + obj.type;
 						
 					$that
@@ -714,7 +715,12 @@ var updateTimers = function updateTimers(){
 			, $timer = $li.find('.recapTimer')
 			, timerVisible = $timer.is(':visible')
 		
-		if(o.lastCaptured !== initTime){
+		if(o.generic == 'Ruin'){
+			if(timerVisible){
+				$timer.hide();
+			}
+		}
+		else if(o.lastCaptured !== initTime){
 			var expires = new Date();
 			expires.setTime(o.lastCaptured.getTime() + buffDuration);
 			
@@ -771,16 +777,18 @@ var updateTimers = function updateTimers(){
  * 
  */	
 
-function writeToLog(logHtml){
+function writeToLog(logHtml, playAudio){
 	var logSize = $log.find('li').length;
-	var mapToShow = getLogMapToShow();		
+	var mapToShow = getLogMapToShow();
+	
+	playAudio = playAudio || true;		
 	
 	
 	var $li = $(logHtml)
 		.hide()
 		.prependTo($log);
 
-	if(mapToShow === 'all' || $li.filter('.' + mapToShow).length){
+	if(playAudio && (mapToShow === 'all' || $li.filter('.' + mapToShow).length)){
 		$li.slideDown('slow');
 		playNotification();
 		

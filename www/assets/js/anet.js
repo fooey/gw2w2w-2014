@@ -273,7 +273,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		
 		get('objectives', {lang: self.lang.slug})
 			.done(function(data){
-				console.log(data);
+				//console.log(data);
 				
 				self.objectives = [];
 				_.each(data, function(obj, i){
@@ -551,6 +551,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		this.prevOwner = undefined;
 		
 		if(this.id >= 62 && this.id <= 76){
+			this.generic = 'Ruin';
 			if(this.id == 62 || this.id == 71 || this.id == 76){
 				this.type = 'temple';
 				this.points = 0;
