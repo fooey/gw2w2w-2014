@@ -398,7 +398,7 @@ function onOwnerChange(mapName, curObj, oldObj){
 		appendGuildToObjective(curObj);
 	}
 	
-	console.log('New Owner: ', mapName, curObj.mapKey, curObj.name, curObj.owner.name, oldObj.owner.name, 'playAudio', playAudio);
+	//console.log('New Owner: ', curObj.mapKey, curObj.generic, curObj, 'playAudio', playAudio);
 }
 
 
@@ -408,19 +408,19 @@ function onClaimerChange(mapName, curObj, oldObj){
 	
 	if(curObj.guildId){
 		var logHtml = renderExternal('log-newClaimer', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj});
-		writeToLog(logHtml);
+		writeToLog(logHtml, true);
 		appendGuildToObjective(curObj);
 		
 		var guild = Anet.getGuild(curObj.guildId);
 		var guildName = (guild) ? guild.name : curObj.guildId;
 		
 		
-		console.log('New Claimer: ', mapName, curObj.name);
+		//console.log('New Claimer: ', mapName, curObj.name);
 		onGuildData();
 	}
 	else{
 		removeGuildFromObjective(curObj.id);
-		console.log('Remove Claimer: ', mapName, curObj.name);
+		//console.log('Remove Claimer: ', mapName, curObj.name);
 	}
 		
 }
@@ -781,16 +781,16 @@ function writeToLog(logHtml, playAudio){
 	var logSize = $log.find('li').length;
 	var mapToShow = getLogMapToShow();
 	
-	playAudio = playAudio || true;		
-	
-	
 	var $li = $(logHtml)
 		.hide()
 		.prependTo($log);
 
-	if(playAudio && (mapToShow === 'all' || $li.filter('.' + mapToShow).length)){
+	if(mapToShow === 'all' || $li.filter('.' + mapToShow).length){
 		$li.slideDown('slow');
-		playNotification();
+		
+		if(playAudio){
+			playNotification();
+		}
 		
 	}
 			
