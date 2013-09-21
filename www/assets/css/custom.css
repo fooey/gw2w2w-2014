@@ -239,11 +239,11 @@ li.objective .recapTimer.unknown{
 	font-style: italic;
 }
 
-#warmupWarning{
+.alert-notify{
 	padding: .5em 1em;
 	text-align: center;
-	font-size: 20pt;
-	line-height: 24pt;
+	font-size: 14pt;
+	line-height: 120%;
 }
 
 #logContainer{
