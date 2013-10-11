@@ -316,13 +316,12 @@ li.objective .recapTimer.unknown{
 
 
 .sprite2small {
-	background-image: url(/assets/img/icons/sprite3.png);
+	background-image: url(/assets/img/icons/sprite3-60x135.png);
 	background-repeat: no-repeat;
-	background-size: 60px 135px;
 	display: inline-block;
-	vertical-align: middle;
 	width: 15px;
 	height: 15px;
+	line-height: 20px;
 	
 	background-position: -45px -45px; //default
 }
