@@ -337,6 +337,7 @@ function onMatchData(){
 	}
 	
 	updateMatchIncomes(matchDetails);
+	updateMatchHoldings();
 	
 	
 	// deep copy to break copy by reference
@@ -622,6 +623,25 @@ function updateMatchIncomes(matchDetails){
 	});
 	
 	prevIncomes = JSON.parse(JSON.stringify(incomes)); // deep copy to break copy by reference
+}
+
+
+
+function updateMatchHoldings(){
+	var objectives = Anet.getObjectives();
+	var $scoreOverall = $('#scoreOverall');
+
+	$('.holdingCount').text('0');
+	
+	_.each(objectives, function(obj, i){
+		var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
+		if(objColor != 'base'){
+			var thisElement = $scoreOverall.find('.' + objColor).find('.' + obj.type);
+			var curVal = parseInt(thisElement.text());
+			thisElement.text(++curVal);
+			//console.log(obj)
+		}
+	});
 }
 
 

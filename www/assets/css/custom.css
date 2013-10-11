@@ -171,6 +171,14 @@ body{
 	text-align: right;
 }
 
+.holdings{
+	margin: 0;
+	padding: 0;
+}
+.holdings .sprite2small{
+	margin-right: .25em;
+}
+
 
 
 .objectives ul{
