@@ -373,3 +373,20 @@ li.objective .recapTimer.unknown{
 .sprite2small.sprite-base-estate	{ background-position: -45px -90px; }
 .sprite2small.sprite-base-overlook	{ background-position: -45px -105px; }
 .sprite2small.sprite-base-ascent	{ background-position: -45px -120px; }
+
+
+#guildClaimsContainer{
+	margin-top: 20px;
+}
+#guildClaims td{
+	font-size: 10pt;
+}
+#guildClaims h2{
+	font-size: 14pt;
+}
+#guildClaims .guildClaims{
+	margin-left: 10px;
+}
+#guildClaims .guildEmblem{
+	padding-right: 20px;
+}

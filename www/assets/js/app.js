@@ -358,20 +358,8 @@ function onGuildData(){
 	console.log('** onGuildData()');
 	var guilds = Anet.getGuilds();
 	
-	$('.guild:has(i)').each(function(i){
-		var $that = $(this);
-		var guildId = $that.data('guildid');
-		
-		if(guilds[guildId]){
-			$that
-				.fadeOut('fast', function(){
-					$that
-						.html('<abbr title="' + guilds[guildId].name + '">[' + guilds[guildId].tag + ']</abbr>')
-						.fadeIn('fast');
-				})
-		}
-		
-	});
+	updateObjectiveGuilds(guilds);
+	updateGuildClaims(guilds);
 }
 
 
@@ -683,13 +671,107 @@ function updateScoreHtml($scoreBoard, score, selector){
 
 
 
+function updateObjectiveGuilds(guilds){
+	$('.guild:has(i)').each(function(i){
+		var $that = $(this);
+		var guildId = $that.data('guildid');
+		
+		if(guilds[guildId]){
+			$that.html('<abbr class="guild-' + guildId + '" title="' + guilds[guildId].name + '">[' + guilds[guildId].tag + ']</abbr>')
+		}
+	});
+}
+
+
+function updateGuildClaims(guilds){
+	var $guilds = $('#guildClaims');
+	
+	_.each(Object.keys(guilds), function(guildId, index){
+		var guildSelector = 'tr.guild-' + guildId;
+		var objectiveClaimsSelector = 'abbr.guild-' + guildId;
+		
+		var $guild =  $guilds.find(guildSelector);
+		var $claims = $(objectiveClaimsSelector);
+		
+		if($guild.length === 0){
+			var guild = guilds[guildId];
+			var emblemId = 'emblem' + guild.id;
+			
+			$guild = $('<tr class="guild-' + guildId + '" />');
+			
+			var $guildEmblem = $('<td/>', {id: emblemId, 'class': 'guildEmblem'});
+			var $guildInfo = $('<td/>', {'class': 'guildInfo'});
+			var $guildName = $('<h2/>', {'class': 'guildName', text: '[' + guild.tag + '] ' + guild.name});
+			var $guildClaims = $('<ul/>', {'class': 'guildClaims unstyled'});
+			
+			
+			$guild
+				.append($guildEmblem)
+				.append(
+					$guildInfo
+						.append($guildName)
+						.append($guildClaims)
+				)
+				
+			$guilds.prepend($guild.hide().slideDown());
+				
+			
+			if(guild.emblem){
+				try{
+			    	gw2emblem.init(emblemId, 160, '#fff');
+				    gw2emblem.drawEmblemGw2(guild.emblem);
+				}
+				catch(any){}
+			}
+		}
+		
+		var claimIds = [];
+		$claims.closest('li').each(function( index ) {
+			var objectiveId = $(this).data('id');
+			claimIds.push(objectiveId);
+		});
+		
+		claimIds = _.uniq(claimIds);
+		
+		$guild.find('.guildClaims').empty();
+		_.each(claimIds, function(objectiveId, index) {
+			
+			var obj = Anet.getObjectiveBy('id', objectiveId);
+			
+			var objectiveName = (
+				(obj.mapKey != 'Center')
+					? (' ' + obj.mapKey + ' - ')
+					: (' ')
+				)
+				+  obj.name;
+			
+			var $sprite = $('<span class="sprite2small sprite-' + obj.owner.color + '-' + obj.type + '"></span> ');
+			var $name = $('<span/>', {text: objectiveName, 'class': 'objName'});
+			
+			var $li = $('<li>')
+				.append($sprite)
+				.append($name);
+			
+			
+			
+			$guild.find('ul').append($li);
+			
+		});
+		
+		
+	});
+}
+
+
+
 function appendGuildToObjective(curObj){
 	var guild = Anet.getGuild(curObj.guildId);
 	
 	var $guildHtml = $('<sup class="guild" data-guildid="' + curObj.guildId + '"></sup>');
 	
 	if(guild) {
-		$guildHtml.append('<abbr title="' + guild.name + '">[' + guild.tag + ']</abbr></sup>');
+		$guildHtml
+			.append('<abbr title="' + guild.name + '">[' + guild.tag + ']</abbr></sup>');
 	}
 	else{
 		$guildHtml.append('<i class="icon-spinner icon-spin"></i></sup>');
@@ -929,16 +1011,6 @@ var objGroups = {
 				, 51		//astral
 			]
 		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				62			//temple
-				, 63		//hollow
-				, 64		//estate
-				, 65		//orchard
-				, 66 		//ascent
-			]
-		}
 		,'South':{
 			alert: 'well'
 			, objectives: [
@@ -947,6 +1019,16 @@ var objGroups = {
 				, 34		//lodge
 				, 53		//vale
 				, 50 		//water
+			]
+		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				62			//temple
+				, 63		//hollow
+				, 64		//estate
+				, 65		//orchard
+				, 66 		//ascent
 			]
 		}
 	}
@@ -965,16 +1047,6 @@ var objGroups = {
 				, 60		//star
 			]
 		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				71			//temple
-				, 70		//hollow
-				, 69		//estate
-				, 68		//orchard
-				, 67 		//ascent
-			]
-		}
 		,'South':{
 			alert: 'well'
 			, objectives: [
@@ -983,6 +1055,16 @@ var objGroups = {
 				, 24		//champ
 				, 59		//vale
 				, 61 		//water
+			]
+		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				71			//temple
+				, 70		//hollow
+				, 69		//estate
+				, 68		//orchard
+				, 67 		//ascent
 			]
 		}
 	}
@@ -1001,16 +1083,6 @@ var objGroups = {
 				, 54		//fog
 			]
 		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				76			//temple
-				, 75		//hollow
-				, 74		//estate
-				, 73		//orchard
-				, 72 		//ascent
-			]
-		}
 		,'South':{
 			alert: 'well'
 			, objectives: [
@@ -1019,6 +1091,16 @@ var objGroups = {
 				, 43		//lodge
 				, 49		//vale
 				, 55 		//water
+			]
+		}
+		,'Ruins':{
+			alert: 'warning'
+			, objectives: [
+				76			//temple
+				, 75		//hollow
+				, 74		//estate
+				, 73		//orchard
+				, 72 		//ascent
 			]
 		}
 	}

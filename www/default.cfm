@@ -70,10 +70,12 @@
 	
 	
 	local.jsPaths = [
-		expandPath('/siteroot/assets/js/app.js')
+		expandPath('/siteroot/assets/js/anet.js')
 		, expandPath('/siteroot/assets/js/lib.js')
-		, expandPath('/siteroot/assets/js/anet.js')
-		, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
+		, expandPath('/siteroot/assets/js/app.js')
+		//, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
+		//, expandPath('/siteroot/assets/plugins/gw2emblem-defs.js')
+		//, expandPath('/siteroot/assets/plugins/gw2emblem.js')
 		//, '/assets/js/bootstrap.min.js'
 		//, '/assets/js/store+json2.min.js'
 	];
@@ -90,6 +92,12 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	
+	<script type="text/javascript" src="/assets/plugins/jquery.pnotify.min.js"></script>
+	<script type="text/javascript" src="/assets/plugins/gw2emblem-defs.js"></script>
+	<script type="text/javascript" src="/assets/plugins/gw2emblem.js"></script>
+	
 	<script type="text/javascript" src="<cfoutput>#local.jsLink#</cfoutput>"></script>
 
 </body>

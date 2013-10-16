@@ -223,6 +223,13 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 					);
 				});
 				
+				tmpWorlds.push(
+					new World({
+						name: 'Default'
+						, color: 'base'
+					})
+				);
+				
 				tmpWorlds.sort(function(a,b){
 					if(a.name < b.name) return -1;
 					if(a.name > b.name) return 1;
@@ -386,8 +393,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 
 
 					if(oldObj.owner){
-						
-						var ownerChanged = (oldObj.owner.name !== curObj.owner.name);
+						var ownerChanged = ((curObj.owner === undefined) || (oldObj.owner.name !== curObj.owner.name));
 						var removedClaimer = (!!oldObj.guildId && !curObj.guildId);
 						var changedClaimer = (oldObj.guildId !== curObj.guildId && curObj.guildId);
 						
@@ -471,6 +477,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 				return (obj[key] == val);
 			}
 		});
+		
 		return world;
 	};
 	
@@ -680,7 +687,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			
 			//console.log('set objective: ', objective, obj.objectives[i]);
 			
-			objective.owner = getWorldBy('color', obj.objectives[i].owner);
+			objective.owner = getWorldBy('color', obj.objectives[i].owner) || 'Default';
 			
 			if(!objective.mapKey){
 				objective.mapKey = this.mapKey;
