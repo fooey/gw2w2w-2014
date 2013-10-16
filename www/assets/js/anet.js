@@ -114,6 +114,10 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		return self.guilds;
 	};
 	
+	this.getBonuses = function(){
+		return self.matchDetails.bonuses;
+	};
+	
 	this.refresh = function(callback){
 		console.log('refresh')
 		setMatchDetails();
@@ -655,6 +659,13 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			, {key: 'RedHome', label: self.match.redWorld.name, color: 'red'}
 			, {key: 'BlueHome', label: self.match.blueWorld.name, color: 'blue'}
 			, {key: 'GreenHome', label: self.match.greenWorld.name, color: 'green'}
+		];
+		
+		this.bonuses = [
+			obj.maps[0].bonuses
+			, obj.maps[1].bonuses
+			, obj.maps[2].bonuses
+			, obj.maps[3].bonuses
 		];
 		
 		this.maps = {};

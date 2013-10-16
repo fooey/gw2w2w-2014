@@ -616,11 +616,11 @@ function updateMatchIncomes(matchDetails){
 
 
 function updateMatchHoldings(){
-	var objectives = Anet.getObjectives();
 	var $scoreOverall = $('#scoreOverall');
 
 	$('.holdingCount').text('0');
 	
+	var objectives = Anet.getObjectives();
 	_.each(objectives, function(obj, i){
 		var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
 		if(objColor != 'base'){
@@ -628,6 +628,20 @@ function updateMatchHoldings(){
 			var curVal = parseInt(thisElement.text());
 			thisElement.text(++curVal);
 			//console.log(obj)
+		}
+	});
+	
+	var bonuses = Anet.getBonuses();
+	_.each(bonuses, function(mapBonuses, i){
+		if(mapBonuses.length){
+			_.each(mapBonuses, function(bonus, i){
+				if(bonus.type === 'bloodlust'){
+					var thisSelector = '#num' + bonus.owner + 'Bloodlust' ;
+					var thisElement = $(thisSelector);
+					var curVal = parseInt(thisElement.text());
+					thisElement.text(++curVal);
+				}
+			});
 		}
 	});
 }

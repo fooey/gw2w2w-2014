@@ -324,7 +324,7 @@ li.objective .recapTimer.unknown{
 
 
 .sprite2small {
-	background-image: url(/assets/img/icons/sprite3-60x135.png);
+	background-image: url(/assets/img/icons/sprite3-60x150.png);
 	background-repeat: no-repeat;
 	display: inline-block;
 	width: 15px;
@@ -373,6 +373,8 @@ li.objective .recapTimer.unknown{
 .sprite2small.sprite-base-estate	{ background-position: -45px -90px; }
 .sprite2small.sprite-base-overlook	{ background-position: -45px -105px; }
 .sprite2small.sprite-base-ascent	{ background-position: -45px -120px; }
+
+.sprite2small.sprite-bloodlust	{ background-position: 0 -135px; }
 
 
 #guildClaimsContainer{
