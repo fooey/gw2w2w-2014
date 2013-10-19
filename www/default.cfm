@@ -1,12 +1,14 @@
 <cfscript>
+	/*
 	param name="request.cssAppend" default="#[]#";
+	param name="request.jsAppend" default="#[]#";
 	
 	
 	local.cssPaths = [
-		expandPath('/siteroot/assets/css/bootstrap.min.css')
-		, expandPath('/siteroot/assets/css/font-awesome.min.css')
-		, expandPath('/siteroot/assets/plugins/jquery.pnotify.default.css')
-		, expandPath('/siteroot/assets/css/custom.css')
+		expandPath('/siteroot')
+		, expandPath('/siteroot')
+		, expandPath('/siteroot')
+		, expandPath('/siteroot')
 	];
 	local.cssPaths.addAll(request.cssAppend);
 	
@@ -14,6 +16,27 @@
 		resourceType = "css",
 		absPaths = local.cssPaths
 	);
+	
+		
+		
+	local.jsPaths = [
+		expandPath('/siteroot/assets/js/anet.js')
+		, expandPath('/siteroot/assets/js/lib.js')
+		, expandPath('/siteroot/assets/js/app.js')
+		//, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
+		//, expandPath('/siteroot/assets/plugins/gw2emblem-defs.js')
+		//, expandPath('/siteroot/assets/plugins/gw2emblem.js')
+		//, '/assets/js/bootstrap.min.js'
+		//, '/assets/js/store+json2.min.js'
+	];
+	local.jsPaths.addAll(request.jsAppend);
+	
+	local.jsLink = application.cfc.static.getMergedLink(
+		resourceType = "js",
+		absPaths = local.jsPaths
+	);
+	
+	*/
 	application.util.cfscript.content(reset=true, type="text/html; charset=utf-8");
 </cfscript><!DOCTYPE html>
 <html>
@@ -21,9 +44,14 @@
 	<meta charset="utf-8">
 	<title itemprop="name">GW2W2W</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css" rel="stylesheet">
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css" rel="stylesheet">
-	<link href="<cfoutput>#local.cssLink#</cfoutput>" rel="stylesheet">
+	
+	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/plugins/jquery.pnotify.default.css" rel="stylesheet">
+	<link href="/assets/css/custom.css" rel="stylesheet">
 	
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -34,6 +62,21 @@
 		ga('create', 'UA-51384-37', 'gw2w2w.com');
 		ga('send', 'pageview');
 	</script>
+	
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	
+	<script type="text/javascript" src="/assets/plugins/jquery.pnotify.min.js"></script>
+	<script type="text/javascript" src="/assets/plugins/gw2emblem-defs.js"></script>
+	<script type="text/javascript" src="/assets/plugins/gw2emblem.js"></script>
+	<script type="text/javascript" src="/assets/js/lib.js"></script>
+	<script type="text/javascript" src="/assets/js/anet.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
 </head>
 
 <body >
@@ -62,43 +105,6 @@
 		</div>
 	</div>
 </div>
-
-
-
-<cfscript>
-	param name="request.jsAppend" default="#[]#";
-	
-	
-	local.jsPaths = [
-		expandPath('/siteroot/assets/js/anet.js')
-		, expandPath('/siteroot/assets/js/lib.js')
-		, expandPath('/siteroot/assets/js/app.js')
-		//, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
-		//, expandPath('/siteroot/assets/plugins/gw2emblem-defs.js')
-		//, expandPath('/siteroot/assets/plugins/gw2emblem.js')
-		//, '/assets/js/bootstrap.min.js'
-		//, '/assets/js/store+json2.min.js'
-	];
-	local.jsPaths.addAll(request.jsAppend);
-	
-	local.jsLink = application.cfc.static.getMergedLink(
-		resourceType = "js",
-		absPaths = local.jsPaths
-	);
-</cfscript>
-	
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-	
-	<script type="text/javascript" src="/assets/plugins/jquery.pnotify.min.js"></script>
-	<script type="text/javascript" src="/assets/plugins/gw2emblem-defs.js"></script>
-	<script type="text/javascript" src="/assets/plugins/gw2emblem.js"></script>
-	
-	<script type="text/javascript" src="<cfoutput>#local.jsLink#</cfoutput>"></script>
 
 </body>
 </html>
