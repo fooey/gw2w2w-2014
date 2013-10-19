@@ -220,6 +220,9 @@ li.objective .objName{
 	text-overflow: ellipsis;
 	max-width: 155px;
 }
+li.objective a{
+	color: inherit;
+}
 
 li.objective .recapTimer{
 	color: #300;
@@ -272,7 +275,7 @@ li.objective .recapTimer.unknown{
 
 #log{
 	height: 200px;
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 .log{
 	margin: 0;
@@ -377,18 +380,18 @@ li.objective .recapTimer.unknown{
 .sprite2small.sprite-bloodlust	{ background-position: 0 -135px; }
 
 
-#guildClaimsContainer{
+#guildsListContainer{
 	margin-top: 20px;
 }
-#guildClaims td{
+#guildsList td{
 	font-size: 10pt;
 }
-#guildClaims h2{
+#guildsList h2{
 	font-size: 14pt;
 }
-#guildClaims .guildClaims{
+#guildsList .guildClaims{
 	margin-left: 10px;
 }
-#guildClaims .guildEmblem{
+#guildsList .guildEmblem{
 	padding-right: 20px;
 }

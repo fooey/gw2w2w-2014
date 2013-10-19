@@ -24,7 +24,7 @@ var Anet
 	
 var prevMatchDetails, prevIncomes;
 var $content, $quickNav, $indicator = $('#indicator')
-var $log, $maps, $scoreBoards, $objectives
+var $log, $maps, $scoreBoards, $objectives, $guildsList;
 
 
 
@@ -359,15 +359,21 @@ function onGuildData(){
 	var guilds = Anet.getGuilds();
 	
 	updateObjectiveGuilds(guilds);
-	updateGuildClaims(guilds);
+	updateGuildsList(guilds);
+	renderGuildEmblems(guilds);
+	updateGuildInfo(guilds);
 }
 
 
 
-function onOwnerChange(mapName, curObj, oldObj){
-	var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
-	var playAudio = (curObj.generic == 'Ruin') ? false : true;
-	writeToLog(logHtml, playAudio);
+function onOwnerChange(mapName, curObj, oldObj, appendToLog){
+	if(appendToLog === undefined){
+		appendToLog = true;
+	}
+	if(oldObj === undefined){
+		oldObj = JSON.parse(JSON.stringify(curObj));;
+		oldObj.owner.color = 'base';
+	}
 	
 	var $li = $objectives[curObj.id];
 	var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
@@ -385,6 +391,14 @@ function onOwnerChange(mapName, curObj, oldObj){
 		
 	if(curObj.guildId){
 		appendGuildToObjective(curObj);
+		var $guild = getGuildListing(curObj.guildId);
+	}
+	
+	if(appendToLog){
+		var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
+		if(curObj.generic !== 'Ruin'){
+			writeToLog(logHtml, true);
+		}
 	}
 	
 	//console.log('New Owner: ', curObj.mapKey, curObj.generic, curObj, 'playAudio', playAudio);
@@ -392,7 +406,15 @@ function onOwnerChange(mapName, curObj, oldObj){
 
 
 
-function onClaimerChange(mapName, curObj, oldObj){
+function onClaimerChange(mapName, curObj, oldObj, appendToLog){
+	if(appendToLog === undefined){
+		appendToLog = true;
+	}
+	if(oldObj === undefined){
+		oldObj = JSON.parse(JSON.stringify(curObj));;
+		oldObj.owner.color = 'base';
+	}
+	
 	var $li = $objectives[curObj.id];
 	
 	if(curObj.guildId){
@@ -448,28 +470,15 @@ function writeInitialDetails(matchDetails){
 	var $matchDetails = $(renderExternal('matchDetails'));
 	var overallScores = renderExternal('matchDetails-overallScores', {matchDetails: matchDetails, match: match});
 	var logHtml = renderExternal('log', {mapTypes: matchDetails.mapTypes});
+	$guildsList = $matchDetails.find('#guildsList');
 	
 	_.each(matchDetails.mapTypes, function(mapType, i){
 		var $map = $matchDetails.find('#breakdown-' + mapType.key);
 		var map = matchDetails.maps[mapType.key];
 		
-		var mapHtml = renderExternal('matchDetails-map', {
-			mapType: mapType
-			, map: map
-		});
-		
-		var mapScoreHtml = renderExternal('matchDetails-MapScore', {
-			mapType: mapType
-			, map: map
-			, match: match
-		});
-		
-		var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {
-			mapType: mapType
-			, map: map
-			, objectivesMap: objGroups[mapType.key]
-		}));
-		
+		var mapHtml = renderExternal('matchDetails-map', {mapType: mapType, map: map});
+		var mapScoreHtml = renderExternal('matchDetails-MapScore', {mapType: mapType, map: map, match: match});
+		var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {mapType: mapType, map: map, objectivesMap: objGroups[mapType.key]}));
 		
 		$map
 			.append(mapHtml)
@@ -478,51 +487,13 @@ function writeInitialDetails(matchDetails){
 			.end()
 			.find('.objectives')
 				.append($mapObjectivesHtml)
-			.end();
-			
-		
-		$map.find('.objective')
-			.each(function(i){
-				var $that = $(this);
-				var id = $that.data('id');
-				var obj = Anet.getObjectiveBy('id', id);
-				
-				// cache element to $objectives object for fast lookup
-				$objectives[id] = $that;
-				
-				if(obj){
-					var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
-					var spriteClass = 'sprite-' + objColor + '-' + obj.type;
-						
-					$that
-						.addClass(objColor)
-						.find('.objName')
-							.attr('title', obj.name)
-							.html(obj.name)
-						.end()
-						.find('.sprite2small')
-							.attr('title', obj.name)
-							.addClass(spriteClass)
-						.end()
-						.find('.recapTimer')
-							.html('?:??')
-							.addClass('unknown')
-						.end();
-							
-					if(obj.guildId){
-						$that.find('.guild')
-							.replaceWith('<sup class="guild" data-guildid="' + obj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>')
-					}
-					else{
-						$that.find('.guild')
-							.remove();
-					}
-				}
-			})
-		.end()
+			.end()
+			.find('.objective')
+				.each(function(i){
+					initializeObjective($(this));
+				})
+			.end()
 	});
-	
-	//console.log(overallScores)
 	
 	$matchDetails
 		.find('.hide')
@@ -532,6 +503,36 @@ function writeInitialDetails(matchDetails){
 		
 	$('#logContainer').append(logHtml);
 	$('#scoreOverall').append(overallScores);
+}
+
+
+	
+function initializeObjective($li){
+	var id = $li.data('id');
+	var obj = Anet.getObjectiveBy('id', id);
+	
+	// cache element to $objectives object for fast lookup
+	$objectives[id] = $li;
+	
+	if(obj){
+		var spriteClass = 'sprite-base-' + obj.type;
+			
+		$li
+			.find('.objName')
+				.attr('title', obj.name)
+				.html(obj.name)
+			.end()
+			.find('.sprite2small')
+				.attr('title', obj.name)
+				.addClass(spriteClass)
+			.end()
+			.find('.recapTimer')
+				.html('?:??')
+				.addClass('unknown')
+			.end();
+			
+		onOwnerChange(obj.mapKey, obj, undefined, false);
+	}
 }
 
 
@@ -550,10 +551,9 @@ function cacheScoreBoards(matchDetails){
 	});
 }	
 
+
+
 function updateMatchScores(matchDetails){
-	//console.log('updateMatchScores: ', matchDetails, matchDetails.score);
-	
-	
 	var colors = Anet.getColors();
 	var mapTypes = matchDetails.mapTypes;
 	
@@ -565,7 +565,6 @@ function updateMatchScores(matchDetails){
 			var score = matchDetails.score[color];
 			
 			updateScoreHtml($scoreBoard, score, '.score');
-			//console.log('update overall score: ', color, score);
 		}
 		
 		// update match scores
@@ -575,7 +574,6 @@ function updateMatchScores(matchDetails){
 				var score = matchDetails.maps[mapType.key].score[color];
 				
 				updateScoreHtml($scoreBoard, score, '.score');
-				//console.log('update map score: ', mapType.key, color, score);
 			}
 		});
 	})
@@ -647,6 +645,7 @@ function updateMatchHoldings(){
 }
 
 
+
 function calculateIncomes(matchDetails){
 	var objectives = Anet.getObjectives();
 	var colors = Anet.getColors();
@@ -691,53 +690,62 @@ function updateObjectiveGuilds(guilds){
 		var guildId = $that.data('guildid');
 		
 		if(guilds[guildId]){
-			$that.html('<abbr class="guild-' + guildId + '" title="' + guilds[guildId].name + '">[' + guilds[guildId].tag + ']</abbr>')
+			$that.html('<a href="#guild-' + guildId + '"><abbr class="guild-' + guildId + '" title="' + guilds[guildId].name + '">[' + guilds[guildId].tag + ']</abbr></a>')
 		}
 	});
 }
 
 
-function updateGuildClaims(guilds){
-	var $guilds = $('#guildClaims');
-	
-	_.each(Object.keys(guilds), function(guildId, index){
-		var guildSelector = 'tr.guild-' + guildId;
-		var objectiveClaimsSelector = 'abbr.guild-' + guildId;
+
+function renderGuildEmblems(guilds){
+	$guildsList.find('.guildEmblem.pending').each(function(i){
+		var $that = $(this);
+		var guildId = $that.closest('tr').data('guildid');
+		var guild = guilds[guildId];
 		
-		var $guild =  $guilds.find(guildSelector);
-		var $claims = $(objectiveClaimsSelector);
-		
-		if($guild.length === 0){
-			var guild = guilds[guildId];
-			var emblemId = 'emblem' + guild.id;
-			
-			$guild = $('<tr class="guild-' + guildId + '" />');
-			
-			var $guildEmblem = $('<td/>', {id: emblemId, 'class': 'guildEmblem'});
-			var $guildInfo = $('<td/>', {'class': 'guildInfo'});
-			var $guildName = $('<h2/>', {'class': 'guildName', text: '[' + guild.tag + '] ' + guild.name});
-			var $guildClaims = $('<ul/>', {'class': 'guildClaims unstyled'});
-			
-			
-			$guild
-				.append($guildEmblem)
-				.append(
-					$guildInfo
-						.append($guildName)
-						.append($guildClaims)
-				)
-				
-			$guilds.prepend($guild.hide().slideDown());
-				
-			
+		if(guild){
 			if(guild.emblem){
 				try{
+					var emblemId = 'emblem' + guildId;
+					$('#' + emblemId).empty();
 			    	gw2emblem.init(emblemId, 160, '#fff');
 				    gw2emblem.drawEmblemGw2(guild.emblem);
 				}
 				catch(any){}
 			}
+			$that.removeClass('pending');
 		}
+	});
+}
+
+
+
+function updateGuildInfo(guilds){
+	$guildsList.find('.guildName.pending').each(function(i){
+		var $that = $(this);
+		var guildId = $that.closest('tr').data('guildid');
+		var guild = guilds[guildId];
+		
+		if(guild){
+			$that
+				.html('<h1>[' + guild.tag + '] ' + guild.name + '</h1>')
+				.removeClass('pending');
+		}
+	});
+}
+
+
+function updateGuildsList(guilds){
+	return;
+	
+	var $guilds = $('#guildsList');
+	
+	_.each(Object.keys(guilds), function(guildId, index){
+		var guildSelector = 'tr.guild-' + guildId;
+		var objectiveClaimsSelector = 'abbr.guild-' + guildId;
+		
+		var $guild = getGuildListing(guildId);
+		var $claims = $(objectiveClaimsSelector);
 		
 		var claimIds = [];
 		$claims.closest('li').each(function( index ) {
@@ -747,7 +755,7 @@ function updateGuildClaims(guilds){
 		
 		claimIds = _.uniq(claimIds);
 		
-		$guild.find('.guildClaims').empty();
+		$guild.find('.guildsList').empty();
 		_.each(claimIds, function(objectiveId, index) {
 			
 			var obj = Anet.getObjectiveBy('id', objectiveId);
@@ -777,19 +785,42 @@ function updateGuildClaims(guilds){
 }
 
 
+function getGuildListing(guildId){
+	var guildSelector = 'tr.guild-' + guildId;
+	var $guild = $guildsList.find(guildSelector);
+	
+	
+	if($guild.length === 0){
+		var emblemId = 'emblem' + guildId;
+		
+		$guild = $('<tr/>', {
+				'class': 'guild-' + guildId
+				, 'id': 'guild-' + guildId
+			})
+			.data('guildid', guildId).hide();
+		
+		var $guildEmblem = $('<td/>', {id: emblemId, 'class': 'guildEmblem pending', html: '<h1><i class="icon-spinner icon-spin"></i>'});
+		var $guildInfo = $('<td class="guildInfo"><h2 class="guildName pending"><i class="icon-spinner icon-spin"></h2><ul class="guildsList unstyled"></ul></td>');
+		
+		$guild
+			.append($guildEmblem)
+			.append($guildInfo)
+			.prependTo($guildsList)
+			.slideDown()
+	}
+	
+	return $guild;
+}
+
+
 
 function appendGuildToObjective(curObj){
 	var guild = Anet.getGuild(curObj.guildId);
 	
-	var $guildHtml = $('<sup class="guild" data-guildid="' + curObj.guildId + '"></sup>');
+	var $guildHtml = $('<sup class="guild" data-guildid="' + curObj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>');
+	var $guild = getGuildListing(curObj.guildId);
 	
-	if(guild) {
-		$guildHtml
-			.append('<abbr title="' + guild.name + '">[' + guild.tag + ']</abbr></sup>');
-	}
-	else{
-		$guildHtml.append('<i class="icon-spinner icon-spin"></i></sup>');
-	}
+	$guild.detach().hide().prependTo($guildsList).slideDown();
 	
 	removeGuildFromObjective(curObj.id);
 	$objectives[curObj.id].append($guildHtml);
