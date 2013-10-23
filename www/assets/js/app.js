@@ -846,7 +846,9 @@ function appendObjectiveToGuildHistory(curObj){
 	$('<li/>', {
 			html: (
 				'<span class="sprite2small ' + sprite + '"></span>'
-				+  ' <span class="objName">'+ dateFormat(new Date(), 'isoTime') + ' ' + curObj.name + '</span>'
+				+  '<span class="historyTime">' + dateFormat(new Date(), 'isoTime') + '</span>'
+				+  '<span class="historyMap">' + curObj.mapKey + '</span>'
+				+  '<span class="historyName">' + curObj.name + '</span>'
 			)
 			, 'class': 'objective team ' + curObj.owner.color
 		})

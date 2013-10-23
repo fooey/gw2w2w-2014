@@ -398,8 +398,18 @@ li.objective .recapTimer.unknown{
 	min-width: 160px;
 }
 
-#guildsList ul.history span.objName{
-	max-width: 100%;
+#guildsList ul.history li,
+#guildsList ul.history span{
 	line-height: 15px;
-	
+}
+#guildsList ul.history span{
+	max-width: 100%;
+	display: inline-block;
+	margin-right: 10px;
+}
+#guildsList ul.history span.historyTime{
+	width: 40px;
+}
+#guildsList ul.history span.historyMap{
+	width: 80px;
 }
