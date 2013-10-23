@@ -1,6 +1,8 @@
 ﻿component 
 output="false"
+accessors="true"
 {
+	property name="ResourceCacheTime";
 	
 	public function init(
 		required localPath
@@ -8,20 +10,10 @@ output="false"
 	){
 		variables.localPath = arguments.localPath;
 		variables.publicPath = arguments.publicPath;
+		variables.resourceCacheTime = createTimeSpan(0,0,0,5);
 		
 		if(NOT directoryExists(variables.localPath)){
 			directoryCreate(variables.localPath);
-		}
-	}
-	
-
-
-	private function getResourceCacheTime(){
-		if(request.isDev){
-			return createTimeSpan(0,0,0,1);
-		}
-		else{
-			return application.cache.time.min;
 		}
 	}
 	
