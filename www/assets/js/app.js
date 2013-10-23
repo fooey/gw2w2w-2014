@@ -420,6 +420,7 @@ function onClaimerChange(mapName, curObj, oldObj, appendToLog){
 	if(curObj.guildId){
 		var logHtml = renderExternal('log-newClaimer', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj});
 		writeToLog(logHtml, true);
+		
 		appendGuildToObjective(curObj);
 		
 		var guild = Anet.getGuild(curObj.guildId);
@@ -704,15 +705,16 @@ function renderGuildEmblems(guilds){
 		var guild = guilds[guildId];
 		
 		if(guild){
+			var emblemId = 'emblem' + guildId;
+			$('#' + emblemId).empty();
 			if(guild.emblem){
 				try{
-					var emblemId = 'emblem' + guildId;
-					$('#' + emblemId).empty();
 			    	gw2emblem.init(emblemId, 160, '#fff');
 				    gw2emblem.drawEmblemGw2(guild.emblem);
 				}
 				catch(any){}
 			}
+
 			$that.removeClass('pending');
 		}
 	});
@@ -799,8 +801,10 @@ function getGuildListing(guildId){
 			})
 			.data('guildid', guildId).hide();
 		
-		var $guildEmblem = $('<td/>', {id: emblemId, 'class': 'guildEmblem pending', html: '<h1><i class="icon-spinner icon-spin"></i>'});
-		var $guildInfo = $('<td class="guildInfo"><h2 class="guildName pending"><i class="icon-spinner icon-spin"></h2><ul class="guildsList unstyled"></ul></td>');
+		var $guildEmblem = $('<td/>').append(
+			$('<div/>', {id: emblemId, 'class': 'guildEmblem pending', html: '<h1><i class="icon-spinner icon-spin"></i>'})
+		);
+		var $guildInfo = $('<td class="guildInfo"><h2 class="guildName pending"><i class="icon-spinner icon-spin"></i></h2><ul class="history unstyled"></ul></td>');
 		
 		$guild
 			.append($guildEmblem)
@@ -825,6 +829,28 @@ function appendGuildToObjective(curObj){
 	removeGuildFromObjective(curObj.id);
 	$objectives[curObj.id].append($guildHtml);
 	
+	appendObjectiveToGuildHistory(curObj);
+	
+};
+
+
+
+function appendObjectiveToGuildHistory(curObj){
+	var guildId = curObj.guildId;
+	var $guild = $guildsList.find('tr.guild-' + guildId);
+	var $guildHistory = $guild.find('.history');
+	
+	
+	var sprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
+	
+	$('<li/>', {
+			html: (
+				'<span class="sprite2small ' + sprite + '"></span>'
+				+  ' <span class="objName">'+ dateFormat(new Date(), 'isoTime') + ' ' + curObj.name + '</span>'
+			)
+			, 'class': 'objective team ' + curObj.owner.color
+		})
+		.prependTo($guildHistory);
 };
 
 
