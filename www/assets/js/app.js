@@ -449,7 +449,7 @@ function onClaimerChange(mapName, curObj, oldObj, appendToLog){
 function writeTitle(){
 	var match = Anet.getMatch();
 	
-	$('title').text(match.redWorld.name+ ' vs ' + match.blueWorld.name+ ' vs ' + match.greenWorld.name);
+	//$('title').text(match.redWorld.name+ ' vs ' + match.blueWorld.name+ ' vs ' + match.greenWorld.name);
 	
 	$('#worldTitle')
 		.html(

@@ -1,3 +1,8 @@
+function slugify(str){
+	str = str.replace('ß', 'ss');
+	return _.slugify(str);
+}
+
 function minuteFormat(ms){
 	var seconds = Math.floor(ms / 1000);
 	var minutes = Math.floor(seconds / 60);

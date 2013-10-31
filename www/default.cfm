@@ -1,48 +1,13 @@
+<cfprocessingdirective pageencoding = "utf-8">
 <cfscript>
-	/*
-	param name="request.cssAppend" default="#[]#";
-	param name="request.jsAppend" default="#[]#";
-	
-	
-	local.cssPaths = [
-		expandPath('/siteroot')
-		, expandPath('/siteroot')
-		, expandPath('/siteroot')
-		, expandPath('/siteroot')
-	];
-	local.cssPaths.addAll(request.cssAppend);
-	
-	local.cssLink = application.cfc.static.getMergedLink(
-		resourceType = "css",
-		absPaths = local.cssPaths
-	);
-	
-		
-		
-	local.jsPaths = [
-		expandPath('/siteroot/assets/js/anet.js')
-		, expandPath('/siteroot/assets/js/lib.js')
-		, expandPath('/siteroot/assets/js/app.js')
-		//, expandPath('/siteroot/assets/plugins/jquery.pnotify.min.js')
-		//, expandPath('/siteroot/assets/plugins/gw2emblem-defs.js')
-		//, expandPath('/siteroot/assets/plugins/gw2emblem.js')
-		//, '/assets/js/bootstrap.min.js'
-		//, '/assets/js/store+json2.min.js'
-	];
-	local.jsPaths.addAll(request.jsAppend);
-	
-	local.jsLink = application.cfc.static.getMergedLink(
-		resourceType = "js",
-		absPaths = local.jsPaths
-	);
-	
-	*/
 	application.util.cfscript.content(reset=true, type="text/html; charset=utf-8");
+	param name="pageTitle" default="Guild Wars 2 WvW Objective Timers";  
+	include "~pageTitle.cfm";
 </cfscript><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
-	<title itemprop="name">Guild Wars 2 WvW Objective Timers</title>
+	<title itemprop="name"><cfoutput>#pageTitle#</cfoutput></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css" rel="stylesheet">
@@ -70,6 +35,26 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	
+	<script>
+		_.slugify = function(str) {
+			if (str == null) return '';
+			
+			var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź",
+				to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczz",
+				regex = new RegExp(defaultToWhiteSpace(from), 'g');
+			
+			str = String(str).toLowerCase().replace(regex, function(c){
+				var index = from.indexOf(c);
+				return to.charAt(index) || '-';
+			});
+			
+			str = str.replace('ß', 'ss');
+			
+			return _s.dasherize(str.replace(/[^\w\s-]/g, ''));
+		}
+	
+	</script>
 	
 	<script type="text/javascript" src="/assets/plugins/jquery.pnotify.min.js"></script>
 	<script type="text/javascript" src="/assets/plugins/gw2emblem-defs.js"></script>

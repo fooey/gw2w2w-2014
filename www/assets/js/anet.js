@@ -529,7 +529,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	var World = function(obj){
 		this.id = obj.id;
 		this.name = obj.name;
-		this.slug = _.slugify(this.name);
+		this.slug = slugify(this.name);
 		this.href = getLink(self.langSlug, this.slug);
 		this.color = undefined;
 		
