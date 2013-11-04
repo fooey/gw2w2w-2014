@@ -153,7 +153,6 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		self.lang = _.find(self.langs, function(obj, i, collection){
 			return (obj.slug == langSlug);
 		});
-		console.log('current lang: ', self.lang);
 	};
 	
 	var setWorld = function setWorld(worldSlug, depth){
@@ -400,16 +399,6 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 						var ownerChanged = ((curObj.owner === undefined) || (oldObj.owner.name !== curObj.owner.name));
 						var removedClaimer = (!!oldObj.guildId && !curObj.guildId);
 						var changedClaimer = (oldObj.guildId !== curObj.guildId && curObj.guildId);
-						
-						/*
-						console.log(
-							'Check for Events: '
-							, (!ownerChanged && !removedClaimer && !changedClaimer) ? 'No Change' : curObj.name + ' Changed '
-							, (ownerChanged) ? 'New Owner' : ''
-							, (removedClaimer) ? 'Removed Claimer' : ''
-							, (changedClaimer) ? 'Changed Claimer' : ''
-						);
-						*/
 						
 						if(ownerChanged){
 							curObj.prevOwner = oldObj.owner;

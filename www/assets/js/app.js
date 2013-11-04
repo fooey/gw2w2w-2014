@@ -159,7 +159,7 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 		.on('focus', function(){
 			if(!windowHasFocus){
 				windowHasFocus = 1;			
-				console.log('window focus');
+				//console.log('window focus');
 				
 				var gaData = {
 				  'hitType': 'event',			// Required.
@@ -464,7 +464,7 @@ function writeTitle(){
 
 
 function writeInitialDetails(matchDetails){	
-	console.log('writeInitialDetails()', matchDetails);
+	//console.log('writeInitialDetails()', matchDetails);
 	
 	var match = Anet.getMatch();
 		
@@ -986,7 +986,7 @@ function getLogMapToShow(){
 
 
 function toggleTabTo(mapKey){
-	console.log('toggleTabTo() ', mapKey);
+	//console.log('toggleTabTo() ', mapKey);
 	
 	if(mapKey == 'all'){
 		$log.find('li').show();
