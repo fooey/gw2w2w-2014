@@ -1,3 +1,20 @@
+_.slugify = function(str) {
+	if (str == null) return '';
+	
+	var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź",
+		to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczz",
+		regex = new RegExp(defaultToWhiteSpace(from), 'g');
+	
+	str = String(str).toLowerCase().replace(regex, function(c){
+		var index = from.indexOf(c);
+		return to.charAt(index) || '-';
+	});
+	
+	str = str.replace('ß', 'ss');
+	
+	return _s.dasherize(str.replace(/[^\w\s-]/g, ''));
+}
+
 function slugify(str){
 	str = str.replace('ß', 'ss');
 	return _.slugify(str);
