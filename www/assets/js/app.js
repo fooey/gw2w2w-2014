@@ -13,7 +13,12 @@ var urlPath = window.location.pathname.toLowerCase().split('/')
 
 
 var Anet
-	, langs
+	, Scoreboard
+	, Objectives
+	, EventLog
+	, Guilds;
+
+var langs
 	, lang
 	, worlds
 	, world
@@ -22,9 +27,9 @@ var Anet
 	//, matchDetails
 	, guilds;
 	
-var prevMatchDetails, prevIncomes;
+	
 var $content, $quickNav, $indicator = $('#indicator')
-var $log, $maps, $scoreBoards, $objectives, $guildsList;
+var $maps, $scoreBoards, $objectives, $guildsList;
 
 
 
@@ -39,8 +44,7 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 		, $quickNav = $('#quickNav')
 		, $indicator = $('#indicator')
 	
-	$log
-		, $maps
+	$maps
 		, $scoreBoards = { overall: {}, maps: {}}
 		, $objectives = {}
 	
@@ -62,17 +66,23 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 			, onOwnerChange: onOwnerChange
 			, onClaimerChange: onClaimerChange
 		};
-		var $log;
+		
+		Scoreboard = new objScoreboard();
+		Objectives = new objObjectives();
+		EventLog = new objEventLog();
+		Guilds = new objGuilds();
 	}
 	
 	
 	Anet = new AnetAPI(urlLangSlug, urlWorldSlug, listeners);
 	
 	
-	
+	/*
+	 * Write Common Views
+	 */
 	writeQuickLang();
 	writeQuickWorlds();
-	writeAttrib();
+	writeAttribution();
 	
 	
 	
@@ -85,14 +95,17 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 	
 	$content.on('click tabClick', '#logTabs a', function(){
 		var $that = $(this);
+		
 		$that
 			.closest('li')
 				.addClass('active')
 				.siblings()
-					.removeClass('active');
+					.removeClass('active')
+				.end()
+			.end();
 		
-		toggleTabTo($that.data('target'));
-		highlightMap($that.data('target'));
+		EventLog.toggleTabTo($that.data('target'));
+		EventLog.highlightMap($that.data('target'));
 		
 		var gaData = {
 		  'hitType': 'event',			// Required.
@@ -121,9 +134,10 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 		e.preventDefault();
 		var $that = $(this);
 		
+		//togle stored state
 		$that.data('enabled', !$that.data('enabled'));
 		
-		playNotification();
+		EventLog.playNotification();
 		
 		if($that.data('enabled')){
 			$that.hide().html('<i class="icon-volume-up"></i>').fadeIn();
@@ -159,7 +173,6 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 		.on('focus', function(){
 			if(!windowHasFocus){
 				windowHasFocus = 1;			
-				//console.log('window focus');
 				
 				var gaData = {
 				  'hitType': 'event',			// Required.
@@ -173,6 +186,7 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 		.on('blur', function(){
 			if(windowHasFocus){
 				windowHasFocus = 0;
+				
 				var gaData = {
 				  'hitType': 'event',			// Required.
 				  'eventCategory': 'App',		// Required.
@@ -188,10 +202,6 @@ var $log, $maps, $scoreBoards, $objectives, $guildsList;
 
 
 
-
-	
-	
-	
 	
 
 /*
@@ -210,7 +220,7 @@ var writeQuickWorlds = function(){
 	$quickNav.find('li:hidden').show();
 };
 
-var writeAttrib = function(){
+var writeAttribution = function(){
 	var html = renderExternal('attrib');
 	$('.container').append(html);
 };
@@ -218,981 +228,3 @@ var writeAttrib = function(){
 
 
 
-/*
- * 
- * WorldOptions Events
- * 
- */
-
-function worldOptions_onInit(){
-	console.log("** worldOptions_onInit()");
-	$indicator.stop().fadeOut();
-	writeWorldOptionsBase();
-	
-	
-	var gaData = {
-		'hitType': 'event',					// Required.
-		'eventCategory': 'App',				// Required.
-		'eventAction': 'Data Initialized',	// Required.
-		'nonInteraction': true
-	};
-	ga('send', gaData);
-}
-
-function worldOptions_onWorldData(){
-	console.log("** worldOptions_onWorldData()");
-	
-	
-	var worlds = { 'US': {}, 'EU': {}};
-	
-	_.each(worlds, function(o, region){
-		_.each(Anet.getLangs(), function(lang, i){
-			worlds[region][lang.name] = _.filter(Anet.getWorlds(), function(world){return world.region === region && world.lang === lang.label})
-		});
-	});
-	
-	
-	var html = renderExternal('worldOptions-worlds', {
-		worlds: worlds
-		, currentLang: urlLangSlug
-	});
-	
-	$('#worldLists').hide().html(html).slideDown();
-}
-
-function worldOptions_onMatchesData(){
-	console.log("** worldOptions_onMatchesData()");
-	
-	var allMatches = Anet.getMatches();
-	var matches = {
-		us: _.filter(allMatches, function(world){return world.id.substring(0,1) == 1})
-		, eu: _.filter(allMatches, function(world){return world.id.substring(0,1) == 2})
-	};
-	
-	var html = renderExternal('worldOptions-matches', {
-		matches: matches
-		, currentLang: urlLangSlug
-	});
-	
-	$('#matchLists').hide().html(html).slideDown();
-}
-
-
-
-/*
- * 
- * WorldOptions Views
- * 
- */
-
-function writeWorldOptionsBase(){
-	if(!$('#worldLists').length){
-		var html = renderExternal('worldOptions', {});
-		$content.html(html);
-	}
-}
-
-
-
-
-/*
- * 
- * Match Details Events
- * 
- */
-
-
-function onInit(){
-	console.log('** onInit()');
-	
-	var gaData = {
-		'hitType': 'event',					// Required.
-		'eventCategory': 'App',				// Required.
-		'eventAction': 'Data Initialized',	// Required.
-		'nonInteraction': true
-	};
-	ga('send', gaData);
-}
-
-function onMatchData(){
-	//console.log('** onMatchData()');
-	
-	var matchDetails = Anet.getMatchDetails()
-		, match = Anet.getMatch();
-	
-	$indicator.stop().fadeOut();
-	
-	
-	if(!$maps){
-		writeInitialDetails(matchDetails);
-		updateTimers();
-		writeTitle(matchDetails);
-		
-		$maps = $('#maps');
-		$log = $('#log');
-		cacheScoreBoards(matchDetails);
-	}
-	else{
-		updateMatchScores(matchDetails);
-	}
-	
-	updateMatchIncomes(matchDetails);
-	updateMatchHoldings();
-	
-	
-	// deep copy to break copy by reference
-	prevMatchDetails = {};
-	prevMatchDetails = JSON.parse(JSON.stringify(matchDetails)); 
-	
-	setTimeout(function(){
-		$indicator
-			.stop()
-			.fadeIn('fast', function(){
-				Anet.refresh()
-			});
-	}, randRange(2000,5000));
-}
-
-
-function onGuildData(){
-	console.log('** onGuildData()');
-	var guilds = Anet.getGuilds();
-	
-	updateObjectiveGuilds(guilds);
-	updateGuildsList(guilds);
-	renderGuildEmblems(guilds);
-	updateGuildInfo(guilds);
-}
-
-
-
-function onOwnerChange(mapName, curObj, oldObj, appendToLog){
-	if(appendToLog === undefined){
-		appendToLog = true;
-	}
-	if(oldObj === undefined){
-		oldObj = JSON.parse(JSON.stringify(curObj));;
-		oldObj.owner.color = 'base';
-	}
-	
-	var $li = $objectives[curObj.id];
-	var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
-	var curSprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
-	
-	removeGuildFromObjective(curObj.id);
-	
-	$li
-		.removeClass(oldObj.owner.color)
-		.addClass(curObj.owner.color)
-		.find('.sprite2small')
-			.removeClass(oldSprite)
-			.addClass(curSprite)
-		.end();
-		
-	if(curObj.guildId){
-		appendGuildToObjective(curObj);
-		var $guild = getGuildListing(curObj.guildId);
-	}
-	
-	if(appendToLog){
-		var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
-		if(curObj.generic !== 'Ruin'){
-			writeToLog(logHtml, true);
-		}
-	}
-	
-	//console.log('New Owner: ', curObj.mapKey, curObj.generic, curObj, 'playAudio', playAudio);
-}
-
-
-
-function onClaimerChange(mapName, curObj, oldObj, appendToLog){
-	if(appendToLog === undefined){
-		appendToLog = true;
-	}
-	if(oldObj === undefined){
-		oldObj = JSON.parse(JSON.stringify(curObj));;
-		oldObj.owner.color = 'base';
-	}
-	
-	var $li = $objectives[curObj.id];
-	
-	if(curObj.guildId){
-		var logHtml = renderExternal('log-newClaimer', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj});
-		writeToLog(logHtml, true);
-		
-		appendGuildToObjective(curObj);
-		
-		var guild = Anet.getGuild(curObj.guildId);
-		var guildName = (guild) ? guild.name : curObj.guildId;
-		
-		
-		//console.log('New Claimer: ', mapName, curObj.name);
-		onGuildData();
-	}
-	else{
-		removeGuildFromObjective(curObj.id);
-		//console.log('Remove Claimer: ', mapName, curObj.name);
-	}
-		
-}
-
-
-
-
-/*
- * 
- * Match Details Views
- * 
- */
-
-function writeTitle(){
-	var match = Anet.getMatch();
-	
-	//$('title').text(match.redWorld.name+ ' vs ' + match.blueWorld.name+ ' vs ' + match.greenWorld.name);
-	
-	$('#worldTitle')
-		.html(
-			'<li><a class="team red" href="' + match.redWorld.href + '">' + match.redWorld.name + '</a></li>'
-			+ '<li><a class="team blue" href="' + match.blueWorld.href + '">' + match.blueWorld.name + '</a></li>'
-			+ '<li><a class="team green" href="' + match.greenWorld.href + '">' + match.greenWorld.name + '</a></li>'
-		)
-		.find('li:contains(' + Anet.getWorld().name + ')')
-			.addClass('active')
-		.end();
-}
-
-
-function writeInitialDetails(matchDetails){	
-	//console.log('writeInitialDetails()', matchDetails);
-	
-	var match = Anet.getMatch();
-		
-	var $matchDetails = $(renderExternal('matchDetails'));
-	var overallScores = renderExternal('matchDetails-overallScores', {matchDetails: matchDetails, match: match});
-	var logHtml = renderExternal('log', {mapTypes: matchDetails.mapTypes});
-	$guildsList = $matchDetails.find('#guildsList');
-	
-	_.each(matchDetails.mapTypes, function(mapType, i){
-		var $map = $matchDetails.find('#breakdown-' + mapType.key);
-		var map = matchDetails.maps[mapType.key];
-		
-		var mapHtml = renderExternal('matchDetails-map', {mapType: mapType, map: map});
-		var mapScoreHtml = renderExternal('matchDetails-MapScore', {mapType: mapType, map: map, match: match});
-		var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {mapType: mapType, map: map, objectivesMap: objGroups[mapType.key]}));
-		
-		$map
-			.append(mapHtml)
-			.find('.scores')
-				.append(mapScoreHtml)
-			.end()
-			.find('.objectives')
-				.append($mapObjectivesHtml)
-			.end()
-			.find('.objective')
-				.each(function(i){
-					initializeObjective($(this));
-				})
-			.end()
-	});
-	
-	$matchDetails
-		.find('.hide')
-			.hide()
-		.end()
-		.appendTo($content);
-		
-	$('#logContainer').append(logHtml);
-	$('#scoreOverall').append(overallScores);
-}
-
-
-	
-function initializeObjective($li){
-	var id = $li.data('id');
-	var obj = Anet.getObjectiveBy('id', id);
-	
-	// cache element to $objectives object for fast lookup
-	$objectives[id] = $li;
-	
-	if(obj){
-		var spriteClass = 'sprite-base-' + obj.type;
-			
-		$li
-			.find('.objName')
-				.attr('title', obj.name)
-				.html(obj.name)
-			.end()
-			.find('.sprite2small')
-				.attr('title', obj.name)
-				.addClass(spriteClass)
-			.end()
-			.find('.recapTimer')
-				.html('?:??')
-				.addClass('unknown')
-			.end();
-			
-		onOwnerChange(obj.mapKey, obj, undefined, false);
-	}
-}
-
-
-
-function cacheScoreBoards(matchDetails){
-	var colors = Anet.getColors();
-	var mapTypes = matchDetails.mapTypes;
-	
-	_.each(colors, function(color, i){
-		$scoreBoards.overall[color] = $('#' + color + 'ScoreBoard');
-		
-		_.each(mapTypes, function(mapType, i){
-			$scoreBoards.maps[mapType.key] = $scoreBoards.maps[mapType.key] || {};
-			$scoreBoards.maps[mapType.key][color] = $('#mapScoreBoard-' + color + '-' + mapType.key); //mapScoreBoard-green-<%= mapType.key %>
-		});
-	});
-}	
-
-
-
-function updateMatchScores(matchDetails){
-	var colors = Anet.getColors();
-	var mapTypes = matchDetails.mapTypes;
-	
-	_.each(colors, function(color, i){
-		
-		// update overall scores
-		if(matchDetails.score[color] !== prevMatchDetails.score[color] ){
-			var $scoreBoard = $scoreBoards.overall[color];
-			var score = matchDetails.score[color];
-			
-			updateScoreHtml($scoreBoard, score, '.score');
-		}
-		
-		// update match scores
-		_.each(mapTypes, function(mapType, i){
-			if(matchDetails.maps[mapType.key].score[color] !== prevMatchDetails.maps[mapType.key].score[color] ){
-				var $scoreBoard = $scoreBoards.maps[mapType.key][color];
-				var score = matchDetails.maps[mapType.key].score[color];
-				
-				updateScoreHtml($scoreBoard, score, '.score');
-			}
-		});
-	})
-}
-
-
-
-function updateMatchIncomes(matchDetails){
-	var incomes = calculateIncomes(matchDetails);
-	var colors = Anet.getColors();
-	var mapTypes = matchDetails.mapTypes;
-	
-	_.each(colors, function(color, i){
-		
-		if(!prevIncomes || incomes.overall[color] !== prevIncomes.overall[color]){
-			var $scoreBoard = $scoreBoards.overall[color];
-			var income = incomes.overall[color];
-			
-			updateScoreHtml($scoreBoard, income, '.income');
-			//console.log('update overall income: ', color, income);
-			
-		}
-		_.each(mapTypes, function(mapType, i){
-			
-			if(!prevIncomes || incomes.maps[mapType.key][color] !== prevIncomes.maps[mapType.key][color]){
-				var $scoreBoard = $scoreBoards.maps[mapType.key][color];
-				var income = incomes.maps[mapType.key][color];
-				
-				updateScoreHtml($scoreBoard, income, '.income');
-				//console.log('update map income: ', mapType.key, color, income);
-			}
-		});
-	});
-	
-	prevIncomes = JSON.parse(JSON.stringify(incomes)); // deep copy to break copy by reference
-}
-
-
-
-function updateMatchHoldings(){
-	var $scoreOverall = $('#scoreOverall');
-
-	$('.holdingCount').text('0');
-	
-	var objectives = Anet.getObjectives();
-	_.each(objectives, function(obj, i){
-		var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
-		if(objColor != 'base'){
-			var thisElement = $scoreOverall.find('.' + objColor).find('.' + obj.type);
-			var curVal = parseInt(thisElement.text());
-			thisElement.text(++curVal);
-			//console.log(obj)
-		}
-	});
-	
-	var bonuses = Anet.getBonuses();
-	_.each(bonuses, function(mapBonuses, i){
-		if(mapBonuses.length){
-			_.each(mapBonuses, function(bonus, i){
-				if(bonus.type === 'bloodlust'){
-					var thisSelector = '#num' + bonus.owner + 'Bloodlust' ;
-					var thisElement = $(thisSelector);
-					var curVal = parseInt(thisElement.text());
-					thisElement.text(++curVal);
-				}
-			});
-		}
-	});
-}
-
-
-
-function calculateIncomes(matchDetails){
-	var objectives = Anet.getObjectives();
-	var colors = Anet.getColors();
-	var mapTypes = matchDetails.mapTypes;
-	var incomes = { overall: {}, maps: {}};
-	
-	_.each(colors, function(color, i){
-		incomes.overall[color] = 0;
-		
-		_.each(mapTypes, function(mapType, i){
-			incomes.maps[mapType.key] = incomes.maps[mapType.key] || {};
-			incomes.maps[mapType.key][color] = 0;
-		});
-	});
-	
-	_.each(objectives, function(obj, i){
-		var objColor = (obj.owner && obj.owner.color) ? obj.owner.color : 'base';
-		if(objColor != 'base'){
-			incomes.overall[objColor] += obj.points;
-			incomes.maps[obj.mapKey][objColor] += obj.points;
-		}
-	});
-	
-	
-	return incomes;
-}
-
-
-function updateScoreHtml($scoreBoard, score, selector){
-	$scoreBoard
-		.find(selector)
-		.fadeOut('fast', function(){
-			$(this).html(_.numberFormat(score)).fadeIn('slow');
-		})
-}
-
-
-
-function updateObjectiveGuilds(guilds){
-	$('.guild:has(i)').each(function(i){
-		var $that = $(this);
-		var guildId = $that.data('guildid');
-		
-		if(guilds[guildId]){
-			$that.html('<a href="#guild-' + guildId + '"><abbr class="guild-' + guildId + '" title="' + guilds[guildId].name + '">[' + guilds[guildId].tag + ']</abbr></a>')
-		}
-	});
-}
-
-
-
-function renderGuildEmblems(guilds){
-	$guildsList.find('.guildEmblem.pending').each(function(i){
-		var $that = $(this);
-		var guildId = $that.closest('tr').data('guildid');
-		var guild = guilds[guildId];
-		
-		if(guild){
-			var emblemId = 'emblem' + guildId;
-			$('#' + emblemId).empty();
-			if(guild.emblem){
-				try{
-			    	gw2emblem.init(emblemId, 160, '#fff');
-				    gw2emblem.drawEmblemGw2(guild.emblem);
-				}
-				catch(any){}
-			}
-
-			$that.removeClass('pending');
-		}
-	});
-}
-
-
-
-function updateGuildInfo(guilds){
-	$guildsList.find('.guildName.pending').each(function(i){
-		var $that = $(this);
-		var guildId = $that.closest('tr').data('guildid');
-		var guild = guilds[guildId];
-		
-		if(guild){
-			$that
-				.html('<h1>[' + guild.tag + '] ' + guild.name + '</h1>')
-				.removeClass('pending');
-		}
-	});
-}
-
-
-function updateGuildsList(guilds){
-	return;
-	
-	var $guilds = $('#guildsList');
-	
-	_.each(Object.keys(guilds), function(guildId, index){
-		var guildSelector = 'tr.guild-' + guildId;
-		var objectiveClaimsSelector = 'abbr.guild-' + guildId;
-		
-		var $guild = getGuildListing(guildId);
-		var $claims = $(objectiveClaimsSelector);
-		
-		var claimIds = [];
-		$claims.closest('li').each(function( index ) {
-			var objectiveId = $(this).data('id');
-			claimIds.push(objectiveId);
-		});
-		
-		claimIds = _.uniq(claimIds);
-		
-		$guild.find('.guildsList').empty();
-		_.each(claimIds, function(objectiveId, index) {
-			
-			var obj = Anet.getObjectiveBy('id', objectiveId);
-			
-			var objectiveName = (
-				(obj.mapKey != 'Center')
-					? (' ' + obj.mapKey + ' - ')
-					: (' ')
-				)
-				+  obj.name;
-			
-			var $sprite = $('<span class="sprite2small sprite-' + obj.owner.color + '-' + obj.type + '"></span> ');
-			var $name = $('<span/>', {text: objectiveName, 'class': 'objName'});
-			
-			var $li = $('<li>')
-				.append($sprite)
-				.append($name);
-			
-			
-			
-			$guild.find('ul').append($li);
-			
-		});
-		
-		
-	});
-}
-
-
-function getGuildListing(guildId){
-	var guildSelector = 'tr.guild-' + guildId;
-	var $guild = $guildsList.find(guildSelector);
-	
-	
-	if($guild.length === 0){
-		var emblemId = 'emblem' + guildId;
-		
-		$guild = $('<tr/>', {
-				'class': 'guild-' + guildId
-				, 'id': 'guild-' + guildId
-			})
-			.data('guildid', guildId).hide();
-		
-		var $guildEmblem = $('<td/>').append(
-			$('<div/>', {id: emblemId, 'class': 'guildEmblem pending', html: '<h1><i class="icon-spinner icon-spin"></i>'})
-		);
-		var $guildInfo = $('<td class="guildInfo"><h2 class="guildName pending"><i class="icon-spinner icon-spin"></i></h2><ul class="history unstyled"></ul></td>');
-		
-		$guild
-			.append($guildEmblem)
-			.append($guildInfo)
-			.prependTo($guildsList)
-			.slideDown()
-	}
-	
-	return $guild;
-}
-
-
-
-function appendGuildToObjective(curObj){
-	var guild = Anet.getGuild(curObj.guildId);
-	
-	var $guildHtml = $('<sup class="guild" data-guildid="' + curObj.guildId + '"><i class="icon-spinner icon-spin"></i></sup>');
-	var $guild = getGuildListing(curObj.guildId);
-	
-	$guild.detach().hide().prependTo($guildsList).slideDown();
-	
-	removeGuildFromObjective(curObj.id);
-	$objectives[curObj.id].append($guildHtml);
-	
-	appendObjectiveToGuildHistory(curObj);
-	
-};
-
-
-
-function appendObjectiveToGuildHistory(curObj){
-	var guildId = curObj.guildId;
-	var $guild = $guildsList.find('tr.guild-' + guildId);
-	var $guildHistory = $guild.find('.history');
-	
-	
-	var sprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
-	
-	$('<li/>', {
-			html: (
-				'<span class="sprite2small ' + sprite + '"></span>'
-				+  '<span class="historyTime">' + dateFormat(new Date(), 'isoTime') + '</span>'
-				+  '<span class="historyMap">' + curObj.mapKey + '</span>'
-				+  '<span class="historyName">' + curObj.name + '</span>'
-			)
-			, 'class': 'objective team ' + curObj.owner.color
-		})
-		.prependTo($guildHistory);
-};
-
-
-
-function removeGuildFromObjective(objId){
-	var $guild = $objectives[objId].find('.guild')
-	
-	if($guild.length){
-		$guild.remove();
-	}
-}
-
-
-
-
-	
-	
-	
-/*
- * 
- * recap timers
- * 
- */	
-
-// first invoked by writeInitialDetails
-var fullStateKnown = false;
-var updateTimers = function updateTimers(){
-	var objectives = Anet.getObjectives()
-		, initTime = Anet.getInitTime()
-		, now = new Date()
-		, buffDuration = 5 * 60 * 1000;
-		
-	_.each(objectives, function(o, index){
-		var $li = $objectives[o.id]
-			, $timer = $li.find('.recapTimer')
-			, timerVisible = $timer.is(':visible')
-		
-		if(o.generic == 'Ruin'){
-			if(timerVisible){
-				$timer.hide();
-			}
-		}
-		else if(o.lastCaptured !== initTime){
-			var expires = new Date();
-			expires.setTime(o.lastCaptured.getTime() + buffDuration);
-			
-			var timeRemaining = expires.getTime() - now.getTime();
-			
-			if(timeRemaining <= 0 && timerVisible){
-				$timer.fadeOut();
-			}
-			else if (timeRemaining > 0 && !timerVisible){
-				$timer.fadeIn();
-			}
-			
-			$timer.filter('.unknown').removeClass('unknown');
-			
-			if(timeRemaining > 0){
-				var timerText = minuteFormat(timeRemaining);
-				//console.log(timerText);
-				$timer.text(timerText);
-			}
-			
-			//console.log(o.lastCaptured.getTime(), expires.getTime(), now.getTime(), expires.getTime() > now.getTime(), timeRemaining, timerVisible);
-		}
-	});
-	
-		
-	// when to hide 'unknown state' indicators
-	if(!fullStateKnown){
-		var elapsed = (now.getTime() - initTime.getTime());
-		if(elapsed > buffDuration){
-			fullStateKnown = true;
-			$('#warmupWarning').slideUp();
-			$('.recapTimer.unknown')
-				.fadeOut('fast', function(){
-					$(this).removeClass('unknown')
-				})
-		}
-		else{
-			var timeRemaining = buffDuration - (elapsed);
-			var timerText = minuteFormat(timeRemaining);
-			$('.recapTimer.unknown').html(timerText);
-		}
-	}
-	
-	setTimeout(updateTimers, 1*1000);
-};
-
-
-	
-	
-	
-/*
- * 
- * log functionality
- * 
- */	
-
-function writeToLog(logHtml, playAudio){
-	var logSize = $log.find('li').length;
-	var mapToShow = getLogMapToShow();
-	
-	var $li = $(logHtml)
-		.hide()
-		.prependTo($log);
-
-	if(mapToShow === 'all' || $li.filter('.' + mapToShow).length){
-		$li.slideDown('slow');
-		
-		if(playAudio){
-			playNotification();
-		}
-		
-	}
-			
-	zebraStripeVisibleLog();
-};
-
-
-function zebraStripeVisibleLog(){
-	$log.find('li')
-		.removeClass('alt')
-		.filter(':visible:even')
-			.addClass('alt');
-}
-
-function getLogMapToShow(){
-	return $('#logTabs li.active a').data('target') || 'all';
-}
-
-
-function toggleTabTo(mapKey){
-	//console.log('toggleTabTo() ', mapKey);
-	
-	if(mapKey == 'all'){
-		$log.find('li').show();
-	}
-	else{
-		$log
-			.find('li:not(.' + mapKey + ')')
-				.hide()
-			.end()
-			.find('li.' + mapKey)
-				.show()
-			.end();
-	}
-	
-	zebraStripeVisibleLog();
-}
-
-
-
-function highlightMap(mapKey){
-	var $map = $('#breakdown-' + mapKey);
-	$('.breakdown').removeClass('active');
-	$map.addClass('active');
-}
-
-
-
-function playNotification(){
-	if($('#audioToggle').data('enabled')){
-		$('#audioNotification').get(0).play();
-	}
-}
-
-
-
-
-
-var objGroups = {
-	'Center': {
-		'Castle':{
-			alert: 'well'
-			, objectives: [
-				9			//sm
-			]
-		}
-		, 'Red Corner':{
-			alert: 'error'
-			, objectives: [
-				1			//overlook
-				, 20		//veloka
-				, 17		//mendons
-				, 18		//anz
-				, 19		//ogre
-				, 5			//pang
-				, 6			//speldan
-			]
-		}
-		, 'Blue Corner':{
-			alert: 'info'
-			, objectives: [
-				2			//valley
-				, 22		//bravost
-				, 15		//langor
-				, 16		//quentin
-				, 21		//durios
-				, 8 		//umber
-				, 7			//dane
-			]
-		}
-		, 'Green Corner':{
-			alert: 'success'
-			, objectives: [
-				3			//lowlands
-				, 13		//jerrifer
-				, 11		//aldons
-				, 14		//klovan
-				, 12		//wildcreek
-				, 4 		//golanta
-				, 10		//rogues
-			]
-		}
-	}
-	
-	, 'RedHome': {
-		'North':{
-			alert: 'error'
-			, objectives: [
-				37			//keep
-				, 33		//bay
-				, 32		//hills
-				, 38		//longview
-				, 40		//cliffside
-				, 39 		//godsword
-				, 52		//hopes
-				, 51		//astral
-			]
-		}
-		,'South':{
-			alert: 'well'
-			, objectives: [
-				35			//briar
-				, 36		//lake
-				, 34		//lodge
-				, 53		//vale
-				, 50 		//water
-			]
-		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				62			//temple
-				, 63		//hollow
-				, 64		//estate
-				, 65		//orchard
-				, 66 		//ascent
-			]
-		}
-	}
-	
-	, 'BlueHome': {
-		'North':{
-			alert: 'info'
-			, objectives: [
-				23			//keep
-				, 27		//bay
-				, 31		//hills
-				, 30		//woodhaven
-				, 28		//dawns
-				, 29 		//spirit
-				, 58		//gods
-				, 60		//star
-			]
-		}
-		,'South':{
-			alert: 'well'
-			, objectives: [
-				25			//briar
-				, 26		//lake
-				, 24		//champ
-				, 59		//vale
-				, 61 		//water
-			]
-		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				71			//temple
-				, 70		//hollow
-				, 69		//estate
-				, 68		//orchard
-				, 67 		//ascent
-			]
-		}
-	}
-	
-	, 'GreenHome': {
-		'North':{
-			alert: 'success'
-			, objectives: [
-				46			//keep
-				, 44		//bay
-				, 41		//hills
-				, 47		//sunny
-				, 57		//crag
-				, 56 		//titan
-				, 48		//faith
-				, 54		//fog
-			]
-		}
-		,'South':{
-			alert: 'well'
-			, objectives: [
-				45			//briar
-				, 42		//lake
-				, 43		//lodge
-				, 49		//vale
-				, 55 		//water
-			]
-		}
-		,'Ruins':{
-			alert: 'warning'
-			, objectives: [
-				76			//temple
-				, 75		//hollow
-				, 74		//estate
-				, 73		//orchard
-				, 72 		//ascent
-			]
-		}
-	}
-};
-
-
-
-
-
-function getLink(langSlug,worldSlug){
-	langSlug = langSlug || urlLangSlug;
-	worldSlug = worldSlug || urlWorldSlug;
-	
-	var link = ['']; // lead with a slash after join('/')
-	if(langSlug && langSlug != ''){
-		link.push(langSlug);
-	}
-	if(worldSlug && worldSlug != ''){
-		link.push(worldSlug);
-	}
-	return link.join('/');
-}

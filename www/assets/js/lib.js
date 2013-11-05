@@ -1,24 +1,32 @@
-_.slugify = function(str) {
-	if (str == null) return '';
+function getLink(langSlug,worldSlug){
+	langSlug = langSlug || urlLangSlug;
+	worldSlug = worldSlug || urlWorldSlug;
 	
-	var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź",
-		to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczz",
-		regex = new RegExp(defaultToWhiteSpace(from), 'g');
-	
-	str = String(str).toLowerCase().replace(regex, function(c){
-		var index = from.indexOf(c);
-		return to.charAt(index) || '-';
-	});
-	
-	str = str.replace('ß', 'ss');
-	
-	return _s.dasherize(str.replace(/[^\w\s-]/g, ''));
+	var link = ['']; // lead with a slash after join('/')
+	if(langSlug && langSlug != ''){
+		link.push(langSlug);
+	}
+	if(worldSlug && worldSlug != ''){
+		link.push(worldSlug);
+	}
+	return link.join('/');
 }
+
+
 
 function slugify(str){
 	str = str.replace('ß', 'ss');
 	return _.slugify(str);
 }
+
+
+
+function copyByValue(inVal){
+	var outVal = JSON.parse(JSON.stringify(inVal));
+	return outVal;
+}
+
+
 
 function minuteFormat(ms){
 	var seconds = Math.floor(ms / 1000);
