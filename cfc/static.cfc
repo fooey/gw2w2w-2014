@@ -2,23 +2,31 @@
 output="false"
 accessors="true"
 {
-	property name="ResourceCacheTime";
+	property name="localPath";
+	property name="publicPath";
+	
+	property name="resourceCacheTime";
 	
 	public function init(
 		required localPath
 		, required publicPath
 	){
-		variables.localPath = arguments.localPath;
-		variables.publicPath = arguments.publicPath;
-		variables.resourceCacheTime = createTimeSpan(0,0,0,5);
+		setLocalPath(arguments.localPath);
+		setPublicPath(arguments.publicPath);
 		
-		if(NOT directoryExists(variables.localPath)){
-			directoryCreate(variables.localPath);
+		setResourceCacheTime(createTimeSpan(0,0,0,5));
+		
+		if(NOT directoryExists(getLocalPath())){
+			directoryCreate(getLocalPath());
 		}
+		else{
+			deleteStaleFiles();
+		}
+		
 	}
 	
 	
-	
+	/*
 	public function getLink(string relPath, appendModHash = true) {
 		if(arguments.appendModHash){
 			local.sysPath = expandPath('/siteRoot/#arguments.relPath#');
@@ -30,11 +38,12 @@ accessors="true"
 		}
 		
 		return local.urlPath;
-	}	
+	}
+	*/	
 	
 	
 	
-	public function getMergedLink(required resourceType, required array absPaths) output=true {
+	public function getMergedLink(required resourceType, required filePrefix, required array absPaths) output=false {
 		local.lastMod = getFileInfo(getCurrentTemplatePath()).Lastmodified;
 		
 		local.paths = [];
@@ -49,8 +58,8 @@ accessors="true"
 		
 		local.modHash = lcase(hash(local.lastMod));
 		
-		local.fileName = "#local.modHash#.#arguments.resourceType#";
-		local.filePath = variables.localPath & "\#local.fileName#";
+		local.fileName = "#arguments.filePrefix#.#local.modHash#.#arguments.resourceType#";
+		local.filePath = getLocalPath() & "\#local.fileName#";
 		
 		
 		if(NOT fileExists(local.filePath) OR structKeyExists(url, "recompileCss")){
@@ -61,16 +70,40 @@ accessors="true"
 			local.cssMerged = ["/* Created #now()# */#local.crlf2#"];
 			
 			for(local.path in local.paths){
-				arrayAppend(local.cssMerged, "/*! #local.crlf#*#local.crlf#* mergefile :: #getFileFromPath(local.path)# #local.crlf#*#local.crlf#*/#local.crlf2#");
+				arrayAppend(local.cssMerged, "#local.crlf2#/* #local.crlf#*#local.crlf#*#local.crlf#*#local.crlf#* mergefile :: #getFileFromPath(local.path)# #local.crlf#*#local.crlf#*#local.crlf#*#local.crlf#*/#local.crlf2#");
 				arrayAppend(local.cssMerged, fileRead(local.path));
 			}
 			
 			fileWrite(local.filePath, arrayTolist(local.cssMerged, local.crlf));
 		}
 		
-		local.urlPath = variables.publicPath & "/#local.fileName#";
+		local.urlPath = getPublicPath() & "/#local.fileName#";
 		
 		return local.urlPath;
+	}
+	
+	
+	
+	private function deleteStaleFiles() {
+		local.maxAge = 5 * 24 * 60;
+		local.now = now();
+		local.qryFiles = directoryList(getLocalPath(), false, "query", "", "dateLastModified");
+		
+		for(local.r = 1; local.r LTE local.qryFiles.recordCount; local.r++){
+			local.lastMod = local.qryFiles.dateLastModified[local.r];
+			local.age = dateDiff("n", local.lastMod, local.now);
+			local.isStale = (local.age GT local.maxAge);
+			
+			if(local.isStale){
+				local.filePath = local.qryFiles.directory[local.r] & "\" & local.qryFiles.name[local.r];
+				fileDelete(local.filePath);
+			}
+			else{
+				break;
+			}
+		}
+		
+		return;
 	}
 
 }
