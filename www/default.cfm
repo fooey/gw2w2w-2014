@@ -1,32 +1,58 @@
 <cfprocessingdirective pageencoding = "utf-8">
 <cfscript>
-	application.util.cfscript.content(reset=true, type="text/html; charset=utf-8");
-	param name="pageTitle" default="Guild Wars 2 WvW Objective Timers";  
+	if(structKeyExists(url, "ViewSource")){
+		application.util.cfscript.content(file="#getCurrentTemplatePath()#", reset=true, type="text/plain; charset=utf-8");
+		abort;
+	}
+	
+	
+	jsLibraries = application.cfc.static.getMergedLink("js", "lib", [
+		expandPath("/approot/www/assets/plugins/jquery.pnotify.min.js")
+		, expandPath("/approot/www/assets/plugins/gw2emblem-defs.js")
+		, expandPath("/approot/www/assets/plugins/gw2emblem.js")
+	]);
+	jsCustom = application.cfc.static.getMergedLink("js", "app", [
+		expandPath("/approot/www/assets/js/lib.js")
+		
+		, expandPath("/approot/www/assets/js/app.js")
+		, expandPath("/approot/www/assets/js/anet.js")
+		, expandPath("/approot/www/assets/js/app.model.worlds.js")
+		, expandPath("/approot/www/assets/js/app.model.objectives.js")
+		
+		, expandPath("/approot/www/assets/js/app.obj.scoreboard.js")
+		, expandPath("/approot/www/assets/js/app.obj.objectives.js")
+		, expandPath("/approot/www/assets/js/app.obj.eventlog.js")
+		, expandPath("/approot/www/assets/js/app.obj.guilds.js")
+	]);
+	
+	
+	cssLibraries = application.cfc.static.getMergedLink("css", "lib", [
+		expandPath("/approot/www/assets/css/bootstrap.min.css")
+		, expandPath("/approot/www/assets/plugins/jquery.pnotify.default.css")
+	]);
+	cssCustom = application.cfc.static.getMergedLink("css", "custom", [
+		expandPath("/approot/www/assets/css/custom.css")
+	]);
+	
 	include "~pageTitle.cfm";
+	
+	
+	application.util.cfscript.content(reset=true, type="text/html; charset=utf-8");
 </cfscript><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
-	<title itemprop="name"><cfoutput>#pageTitle#</cfoutput></title>
+	<title itemprop="name"><cfoutput>#getPageTitle()#</cfoutput></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css" rel="stylesheet">
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css" rel="stylesheet">
 	
-	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
-	<link href="/assets/plugins/jquery.pnotify.default.css" rel="stylesheet">
-	<link href="/assets/css/custom.css" rel="stylesheet">
-	
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-		ga('create', 'UA-51384-37', 'gw2w2w.com');
-		ga('send', 'pageview');
-	</script>
+	<cfoutput>
+		<link href="#cssLibraries#" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+		<link href="#cssCustom#" rel="stylesheet">
+	</cfoutput>
 	
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
@@ -35,14 +61,17 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<cfoutput>
+		<script type="text/javascript" src="#jsLibraries#"></script>
+		<script type="text/javascript" src="#jsCustom#"></script>
+	</cfoutput>
 	
-	<script type="text/javascript" src="/assets/plugins/jquery.pnotify.min.js"></script>
-	<script type="text/javascript" src="/assets/plugins/gw2emblem-defs.js"></script>
-	<script type="text/javascript" src="/assets/plugins/gw2emblem.js"></script>
 	
-	<script type="text/javascript" src="/assets/js/lib.js"></script>
-	<script type="text/javascript" src="/assets/js/anet.js"></script>
-	<script type="text/javascript" src="/assets/js/app.js"></script>
+	<!-- ****************** -->
+	<!--                    -->
+	<!--  HIRE ME Anet! xD  -->
+	<!--                    -->
+	<!-- ****************** -->
 </head>
 
 <body >
@@ -72,5 +101,15 @@
 	</div>
 </div>
 
+	
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	ga('create', 'UA-51384-37', 'gw2w2w.com');
+	ga('send', 'pageview');
+</script>
 </body>
 </html>
