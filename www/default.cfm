@@ -42,7 +42,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title itemprop="name"><cfoutput>#getPageTitle()#</cfoutput></title>
+	<title><cfoutput>#getPageTitle(url.lang, url.world)#</cfoutput></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<link href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css" rel="stylesheet">

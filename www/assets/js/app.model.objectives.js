@@ -27,8 +27,7 @@ function onInit(){
 function onMatchData(){
 	//console.log('** onMatchData()');
 	
-	var matchDetails = Anet.getMatchDetails()
-		, match = Anet.getMatch();
+	var matchDetails = Anet.getMatchDetails();
 	
 	$indicator.stop().fadeOut();
 	
@@ -46,6 +45,7 @@ function onMatchData(){
 	else{
 		Scoreboard.update(matchDetails);
 	}
+
 	
 	
 	// deep copy to break copy by reference
@@ -91,7 +91,6 @@ function onOwnerChange(mapName, curObj, oldObj, appendToLog){
 		oldObj = cloneObjAsDefault(curObj);
 	}
 	
-	Objectives.removeGuild(curObj.id);
 	Objectives.updateOwner(mapName, curObj, oldObj, appendToLog);
 }
 

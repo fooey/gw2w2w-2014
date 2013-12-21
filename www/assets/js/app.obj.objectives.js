@@ -30,6 +30,8 @@ var objObjectives = function(){
 		var $li = $objectives[curObj.id];
 		var oldSprite = 'sprite-' + oldObj.owner.color + '-' + oldObj.type;
 		var curSprite = 'sprite-' + curObj.owner.color + '-' + curObj.type;
+		
+		self.removeGuild(curObj.id);
 	
 		$li
 			.removeClass(oldObj.owner.color)
@@ -44,12 +46,9 @@ var objObjectives = function(){
 			Guilds.initGuild(curObj.guildId);
 		}
 		
-		if(appendToLog){
+		if(appendToLog && curObj.generic !== 'Ruin'){
 			var logHtml = renderExternal('log-newOwner', {timeStamp: dateFormat(new Date(), 'isoTime'), mapName: mapName, curObj: curObj, oldObj: oldObj});
-			if(curObj.generic !== 'Ruin'){
-				//writeToLog(logHtml, true);
-				EventLog.write(logHtml, true);
-			}
+			EventLog.write(logHtml, true);
 		}
 	}
 

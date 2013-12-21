@@ -30,7 +30,7 @@
     	var worldsData = cacheGet(cacheKey);
     	
     	if(isNull(worldsData)){
-			var apiWorlds = "https://api.guildwars2.com/v1/world_names.json?lang=#url.lang#";
+			var apiWorlds = "https://api.guildwars2.com/v1/world_names.json?lang=#arguments.lang#";
 			
 			var requestContent = new http(
 					url=apiWorlds
@@ -38,12 +38,15 @@
 					, timeout=2
 				)
 				.send()
-				.getPrefix()
-				.fileContent.toString("UTF-8");
-				
-			worldsData = deserializeJson(requestContent);
-			
-			cachePut(cacheKey, worldsData, createTimeSpan(0,0,1,0));
+				.getPrefix();
+							
+			if(requestContent.statusCode EQ "200 OK"){
+				worldsData = deserializeJson(requestContent.fileContent.toString("UTF-8"));
+				cachePut(cacheKey, worldsData, createTimeSpan(0,0,1,0));
+			}
+			else{
+				throw("Connection failure");
+			}
 		}
 		
 		return worldsData;
@@ -51,23 +54,22 @@
     
     
     
-    function getPageTitle(){
-		try{
-			worlds = getWorldsData(url.lang);
-		
-			for(world IN worlds){
-				world['slug'] = slugify(world.name);
-				
-				if(world['slug'] EQ url.world){
-					return "#world.name# WvW Objective Timers";
+    function getPageTitle(urlLang, urlWorld){
+    	if(arguments.urlWorld NEQ ""){
+			try{
+				var worlds = getWorldsData(arguments.urlLang);
+			
+				for(var world IN worlds){
+					var nameSlug = slugify(world.name);
+					
+					if(nameSlug EQ arguments.urlWorld){
+						return "#world.name# WvW Objective Timers";
+					}
 				}
 			}
+			catch(any expt){}
 		}
-		catch(any expt){}
-		
-		//else
-		return "Guild Wars 2 WvW Objective Timers";  
-    	
+		return "Guild Wars 2 WvW Objective Timers"; 
     }
 	
 </cfscript>
