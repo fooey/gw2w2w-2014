@@ -111,22 +111,21 @@ var objGuilds = function(){
 	
 	var renderGuildEmblems = function (guilds){
 		$guildsList.find('.guildEmblem.pending').each(function(i){
-			var $that = $(this);
-			var guildId = $that.closest('tr').data('guildid');
+			var $guild = $(this);
+			var guildId = $guild.closest('tr').data('guildid');
 			var guild = guilds[guildId];
 			
 			if(guild){
-				var emblemId = 'emblem' + guildId;
-				$('#' + emblemId).empty();
+				var $emblem = $('#emblem' + guildId);
+				$emblem.empty();
+
 				if(guild.emblem){
-					try{
-				    	gw2emblem.init(emblemId, 160, '#fff');
-					    gw2emblem.drawEmblemGw2(guild.emblem);
-					}
-					catch(any){}
+					$emblem.append($('<img>', {
+						'src': "http://guilds.gw2w2w.com/" + guildId + '.svg',
+						'width': 160,
+						'height': 160,
+					}));
 				}
-	
-				$that.removeClass('pending');
 			}
 		});
 	};

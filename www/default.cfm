@@ -8,8 +8,6 @@
 	
 	jsLibraries = application.cfc.static.getMergedLink("js", "lib", [
 		expandPath("/approot/www/assets/plugins/jquery.pnotify.min.js")
-		, expandPath("/approot/www/assets/plugins/gw2emblem-defs.js")
-		, expandPath("/approot/www/assets/plugins/gw2emblem.js")
 	]);
 	jsCustom = application.cfc.static.getMergedLink("js", "app", [
 		expandPath("/approot/www/assets/js/lib.js")
@@ -57,10 +55,10 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/async/1.22/async.min.js"></script>
 	<cfoutput>
 		<script type="text/javascript" src="#jsLibraries#"></script>
 		<script type="text/javascript" src="#jsCustom#"></script>
