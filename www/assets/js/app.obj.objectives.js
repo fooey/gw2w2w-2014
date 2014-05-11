@@ -141,40 +141,48 @@ var objObjectives = function(){
 			, now = new Date()
 			, buffDuration = 5 * 60 * 1000;
 			
-		_.each(objectives, function(o, index){
-			var $li = $objectives[o.id]
-				, $timer = $li.find('.recapTimer')
-				, timerVisible = $timer.is(':visible')
-			
-			if(o.generic == 'Ruin'){
-				if(timerVisible){
-					$timer.hide();
+		async.forEach(
+			objectives,
+			function(o, nextObjective){
+				var $li = $objectives[o.id]
+					, $timer = $li.find('.recapTimer')
+					, timerVisible = $timer.is(':visible')
+				
+				if(o.generic == 'Ruin'){
+					if(timerVisible){
+						$timer.hide();
+					}
 				}
+				else if(o.lastCaptured !== initTime){
+					var expires = new Date();
+					expires.setTime(o.lastCaptured.getTime() + buffDuration);
+					
+					var timeRemaining = expires.getTime() - now.getTime();
+					
+					if(timeRemaining <= 0 && timerVisible){
+						$timer.fadeOut();
+					}
+					else if (timeRemaining > 0 && !timerVisible){
+						$timer.fadeIn();
+					}
+					
+					$timer.filter('.unknown').removeClass('unknown');
+					
+					if(timeRemaining > 0){
+						var timerText = minuteFormat(timeRemaining);
+						//console.log(timerText);
+						$timer.text(timerText);
+					}
+					
+					//console.log(o.lastCaptured.getTime(), expires.getTime(), now.getTime(), expires.getTime() > now.getTime(), timeRemaining, timerVisible);
+				}
+
+				nextObjective(null);
+			},
+			function(err){
+				if(err)console.log('ERROR in updateTimers()', err);
 			}
-			else if(o.lastCaptured !== initTime){
-				var expires = new Date();
-				expires.setTime(o.lastCaptured.getTime() + buffDuration);
-				
-				var timeRemaining = expires.getTime() - now.getTime();
-				
-				if(timeRemaining <= 0 && timerVisible){
-					$timer.fadeOut();
-				}
-				else if (timeRemaining > 0 && !timerVisible){
-					$timer.fadeIn();
-				}
-				
-				$timer.filter('.unknown').removeClass('unknown');
-				
-				if(timeRemaining > 0){
-					var timerText = minuteFormat(timeRemaining);
-					//console.log(timerText);
-					$timer.text(timerText);
-				}
-				
-				//console.log(o.lastCaptured.getTime(), expires.getTime(), now.getTime(), expires.getTime() > now.getTime(), timeRemaining, timerVisible);
-			}
-		});
+		);
 		
 			
 		// when to hide 'unknown state' indicators

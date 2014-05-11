@@ -137,32 +137,39 @@ function generateLayout(matchDetails){
 	var overallScores = renderExternal('matchDetails-overallScores', {matchDetails: matchDetails, match: match});
 	var logHtml = renderExternal('log', {mapTypes: matchDetails.mapTypes});
 	
-	_.each(matchDetails.mapTypes, function(mapType, i){
-		var $map = $matchDetails.find('#breakdown-' + mapType.key);
-		var map = matchDetails.maps[mapType.key];
-		
-		var mapHtml = renderExternal('matchDetails-map', {mapType: mapType, map: map});
-		var mapScoreHtml = renderExternal('matchDetails-MapScore', {mapType: mapType, map: map, match: match});
-		var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {mapType: mapType, map: map, objectivesMap: objectiveGroups[mapType.key]}));
-		
-		$map
-			.append(mapHtml)
-			.find('.scores')
-				.append(mapScoreHtml)
-			.end()
-			.find('.objectives')
-				.append($mapObjectivesHtml)
-			.end()
-	});
-	
-	$matchDetails
-		.find('.hide')
-			.hide()
-		.end()
-		.appendTo($content);
-		
-	$('#logContainer').append(logHtml);
-	$('#scoreOverall').append(overallScores);
+	async.forEach(
+		matchDetails.mapTypes,
+		function(mapType, nextMapType){
+			var $map = $matchDetails.find('#breakdown-' + mapType.key);
+			var map = matchDetails.maps[mapType.key];
+			
+			var mapHtml = renderExternal('matchDetails-map', {mapType: mapType, map: map});
+			var mapScoreHtml = renderExternal('matchDetails-MapScore', {mapType: mapType, map: map, match: match});
+			var $mapObjectivesHtml = $(renderExternal('matchDetails-objectives', {mapType: mapType, map: map, objectivesMap: objectiveGroups[mapType.key]}));
+			
+			$map
+				.append(mapHtml)
+				.find('.scores')
+					.append(mapScoreHtml)
+				.end()
+				.find('.objectives')
+					.append($mapObjectivesHtml)
+				.end()
+
+			nextMapType(null);
+		},
+		function(err){
+			$matchDetails
+				.find('.hide')
+					.hide()
+				.end()
+				.appendTo($content);
+				
+			$('#logContainer').append(logHtml);
+			$('#scoreOverall').append(overallScores);
+
+		}
+	);
 }
 
 

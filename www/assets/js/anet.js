@@ -198,6 +198,9 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	
 	var get = function get(slug, params, onDone){
 		var getUrl = self.api + self.apiSlugs[slug];
+		if (slug === 'worlds') {
+			getUrl = '/assets/cache/' + ['world_names', params.lang, 'json'].join('.');
+		}
 		//console.log('requesting', slug, getUrl, 'params', params);
 		
 		var request = $.ajax({
@@ -216,33 +219,37 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	};
 	
 	var setWorlds = function(worldSlug){
-		get('worlds', {lang: self.lang.slug})
-			.done(function(data){
-				var tmpWorlds = [];
-				
-				_.each(data, function(obj,i){
+		get('worlds', {
+			lang: self.lang.slug
+		})
+		.done(function(data){
+			async.concat(
+				data, 
+				function(obj, next){
+					next(null, new World(obj));
+				},
+				function(err, tmpWorlds){
 					tmpWorlds.push(
-						new World(obj)
+						new World({
+							name: 'Default'
+							, color: 'base'
+						})
 					);
-				});
-				
-				tmpWorlds.push(
-					new World({
-						name: 'Default'
-						, color: 'base'
-					})
-				);
-				
-				tmpWorlds.sort(function(a,b){
-					if(a.name < b.name) return -1;
-					if(a.name > b.name) return 1;
-					return 0;
-				});
-				
-				self.worlds = tmpWorlds;
-				
-				setTimeout(listeners.onWorldData, self.listenerDelayMS);
-			});	
+					
+					tmpWorlds.sort(function(a,b){
+						if(a.name < b.name) return -1;
+						if(a.name > b.name) return 1;
+						return 0;
+					});
+
+					
+					self.worlds = tmpWorlds;
+					
+					self.listeners.onWorldData();
+				}
+			);
+			
+		});	
 	};
 	
 	var setMatches = function setMatches(depth){
@@ -258,22 +265,26 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		else {
 			get('matches', {
 				lang: self.lang.slug
-			}).done(function(data){
-				var tmpMatches = [];
+			})
+			.done(function(data){
+				async.concat(
+					data.wvw_matches,
+					function(obj, next){
+						next(null, new Match(obj));
+					},
+					function(err, tmpMatches){
+						tmpMatches.sort(function(a,b){
+							if(a.id < b.id) return -1;
+							if(a.id > b.id) return 1;
+							return 0;
+						});
+						
+						self.matches = tmpMatches;
+						
+						self.listeners.onMatchesData();
+					}
+				);
 				
-				_.each(data.wvw_matches, function(obj, i){
-					tmpMatches.push(new Match(obj));
-				});
-				
-				tmpMatches.sort(function(a,b){
-					if(a.id < b.id) return -1;
-					if(a.id > b.id) return 1;
-					return 0;
-				});
-				
-				self.matches = tmpMatches;
-				
-				setTimeout(listeners.onMatchesData, self.listenerDelayMS);
 			});
 			
 		}
@@ -281,17 +292,21 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	
 	var setObjectives = function(){
 		
-		get('objectives', {lang: self.lang.slug})
-			.done(function(data){
-				//console.log(data);
-				
-				self.objectives = [];
-				_.each(data, function(obj, i){
-					self.objectives.push(new Objective(obj));
-				});
-				
-				setTimeout(listeners.onObjectivesData, self.listenerDelayMS);
-			});
+		get('objectives', {
+			lang: self.lang.slug
+		})
+		.done(function(data){
+			async.concat(
+				data,
+				function(obj, next){
+					next(null, new Objective(obj));
+				},
+				function(err, tmpObjectives){
+					self.objectives = tmpObjectives;
+					self.listeners.onObjectivesData();
+				}
+			);
+		});
 	};
 	
 	var setMatchDetails = function setMatchDetails(depth){
@@ -312,62 +327,56 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 				updateMatchDetails(new MatchDetails(data));
 				
 				//console.log('setMatchDetails() current details', self.matchDetails)
-				setTimeout(listeners.onMatchData, self.listenerDelayMS);
+				setTimeout(self.listeners.onMatchData, self.listenerDelayMS);
 			});
 		}
 	};
 	
 	
 	var queueMissingGuilds = function(){
-		var guildQueue = [];
+		async.concat(
+			Object.keys(self.matchDetails.maps),
+			function(mapKey, nextMap){
+				var map = self.matchDetails.maps[mapKey];
+				nextMap(null, _.pluck(map.objectives, 'guildId'))
+			},
+			function(err, guildQueue){
+				guildQueue = _.without(guildQueue, undefined);
+				guildQueue = _.uniq(guildQueue);
+
+				if(self.guilds){
+					// don't lookup known guilds
+					guildQueue = _.difference(guildQueue, Object.keys(self.guilds));
+				}
+				
+				setGuilds(guildQueue);
+			}
+		);
 		
-		_.each(self.matchDetails.maps, function(map, index){
-			guildQueue = _.union(
-				guildQueue
-				, _.pluck(map.objectives, 'guildId')
-			);
-		});
-		
-		//console.log('guildQueue: ', guildQueue)
-		guildQueue = _.without(guildQueue, undefined);
-		
-		setGuilds(guildQueue);
 	};
 	
 	
 	var setGuilds = function setGuilds(guildQueue){
 		self.guilds = self.guilds || [];
-		var newGuilds = 0;
 		
-		_.each(guildQueue, function(guildId, index){
-			if (self.guilds[guildId]) {
-				guildQueue = _.without(guildQueue, guildId);
-			}
-			else {
-				newGuilds++;
-				get('guilds', {guild_id: guildId})
+		if(guildQueue.length){
+			async.forEach(
+				guildQueue,
+				function(guildId, nextGuild){
+					get('guilds', {
+						guild_id: guildId
+					})
 					.done(function(data){
 						var thisGuild = new Guild(data);
 						self.guilds[thisGuild.id] = thisGuild;
-						
-						guildQueue = _.without(guildQueue, thisGuild.id);
-					});
-			}
-		});
-		
-		(function guildDataLoading(depth){
-			depth = depth || 0;
-			
-			if(++depth > 30){
-				notice('Data Error','Failed to acquire Guild Data');
-			}
-			else if (guildQueue.length) {
-				setTimeout(function(){guildDataLoading(depth)}, self.recheckDelayMS);
-			}
-			else if (newGuilds) {
-				setTimeout(listeners.onGuildData, self.listenerDelayMS);
-			}
-		})();
+					})
+					.always(function(){
+						nextGuild();
+					})
+				},
+				self.listeners.onGuildData
+			);
+		}
 	};
 	
 	
@@ -427,7 +436,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 		
 		self.matchDetails = {};
 		self.matchDetails = JSON.parse(JSON.stringify(tmpMatchDetails));
-		tmpMatchDetails = {};
+		
 		queueMissingGuilds();
 	}
 	
@@ -439,12 +448,15 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 	 * 
 	 */
 	
-	var notifyListeners = function(notifyQueue){	
-		_.each(notifyQueue, function(obj,i){
-			setTimeout(function(){
+	var notifyListeners = function(notifyQueue){
+		async.forEach(
+			notifyQueue,
+			function(obj, next){
 				listeners[obj.method].apply(null, obj.args);
-			}, self.listenerDelayMS);
-		});
+				next();
+			},
+			_.noop
+		);
 	}
 	
 	
@@ -757,7 +769,7 @@ var AnetAPI = function AnetAPI(langSlug, worldSlug, listeners){
 			}
 		}
 				
-		setTimeout(listeners.onInit, self.listenerDelayMS);
+		setTimeout(self.listeners.onInit, self.listenerDelayMS);
 		
 	})(langSlug, worldSlug);
 	

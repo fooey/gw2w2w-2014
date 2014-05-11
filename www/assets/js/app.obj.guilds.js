@@ -110,40 +110,52 @@ var objGuilds = function(){
 	 */
 	
 	var renderGuildEmblems = function (guilds){
-		$guildsList.find('.guildEmblem.pending').each(function(i){
-			var $guild = $(this);
-			var guildId = $guild.closest('tr').data('guildid');
-			var guild = guilds[guildId];
-			
-			if(guild){
-				var $emblem = $('#emblem' + guildId);
-				$emblem.empty();
+		async.forEach(
+			$guildsList.find('.guildEmblem.pending'),
+			function(guildObj, nextGuild){
+				var $guild = $(guildObj);
+				var guildId = $guild.closest('tr').data('guildid');
+				var guild = guilds[guildId];
+				
+				if(guild){
+					var $emblem = $('#emblem' + guildId);
+					$emblem.empty();
 
-				if(guild.emblem){
-					$emblem.append($('<img>', {
-						'src': "http://guilds.gw2w2w.com/" + guildId + '.svg',
-						'width': 160,
-						'height': 160,
-					}));
+					if(guild.emblem){
+						$emblem.append($('<img>', {
+							'src': "http://guilds.gw2w2w.com/" + guildId + '.svg',
+							'width': 160,
+							'height': 160,
+						}));
+					}
 				}
-			}
-		});
+				nextGuild();
+			},
+			_.noop
+		);
 	};
 
 
 
 	var updateGuildInfo = function (guilds){
-		$guildsList.find('.guildName.pending').each(function(i){
-			var $that = $(this);
-			var guildId = $that.closest('tr').data('guildid');
-			var guild = guilds[guildId];
-			
-			if(guild){
-				$that
-					.html('<h1>[' + guild.tag + '] ' + guild.name + '</h1>')
-					.removeClass('pending');
-			}
-		});
+		async.forEach(
+			$guildsList.find('.guildName.pending'),
+			function(guildObj, nextGuild){
+				var $guild = $(guildObj);
+				var guildId = $guild.closest('tr').data('guildid');
+				var guild = guilds[guildId];
+				
+				if(guild){
+					$guild
+						.html('<h1>[' + guild.tag + '] ' + guild.name + '</h1>')
+						.removeClass('pending');
+				}
+
+				nextGuild();
+			},
+			_.noop
+		);
+
 	};
 
 
